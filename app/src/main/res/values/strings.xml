@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EpayApp</string>
+    <string name="app_name_epay">Epay</string>
+    <string name="epay_logo">Epay App Logo</string>
+
+    <!-- Login Screen Strings -->
+    <string name="hint_email">Enter your email address</string>
+    <string name="hint_password">Enter your password</string>
+    <string name="button_login">Login</string>
+    <string name="text_dont_have_account_signup">Don\'t have an account? \u0020<font color="#1A73E8">Sign up</font></string>
+
+    <!-- Sign Up Screen Strings -->
+    <string name="subtitle_create_account">Create your account to get started.</string>
+    <string name="label_mobile_no">Mobile No.</string>
+    <string name="hint_mobile_no">Enter 10 digit mobile number</string>
+    <string name="label_email_id">Email ID</string>
+    <string name="label_password">Password</string>
+    <string name="button_signup">Sign up</string>
+    <string name="text_already_have_account_login">Already have an account? \u0020<font color="#1A73E8">Log in</font></string>
+
+</resources>
