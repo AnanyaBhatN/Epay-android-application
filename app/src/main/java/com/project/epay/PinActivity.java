@@ -10,17 +10,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PinActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PIN_LENGTH = 4;
     private int pinIndex = 0;
-    private List<View> pinDots = new ArrayList<>();
+    private View[] pinDots = new View[PIN_LENGTH];
     private TextView tvTransactionDetails;
 
     private String name, phone, amount;
+    private boolean transactionSaved = false; // ✅ ensure one-time save
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,32 +32,36 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_pin);
 
         // Initialize PIN dots
-        pinDots.add(findViewById(R.id.pin_dot_1));
-        pinDots.add(findViewById(R.id.pin_dot_2));
-        pinDots.add(findViewById(R.id.pin_dot_3));
-        pinDots.add(findViewById(R.id.pin_dot_4));
+        pinDots[0] = findViewById(R.id.pin_dot_1);
+        pinDots[1] = findViewById(R.id.pin_dot_2);
+        pinDots[2] = findViewById(R.id.pin_dot_3);
+        pinDots[3] = findViewById(R.id.pin_dot_4);
 
         tvTransactionDetails = findViewById(R.id.tv_transaction_details);
 
-        // Get data from AmountActivity
+        // Get data from previous activity
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
         phone = intent.getStringExtra("phone");
         amount = intent.getStringExtra("amount");
 
-        // Dynamically set transaction info
-        if (name != null && amount != null && !amount.isEmpty()) {
+        // Show transaction details
+        if (name != null && !name.isEmpty()) {
             tvTransactionDetails.setText("To " + name + " | Send Amt: ₹" + amount);
-        } else if (phone != null && amount != null && !amount.isEmpty()) {
+        } else if (phone != null && !phone.isEmpty()) {
             tvTransactionDetails.setText("To " + phone + " | Send Amt: ₹" + amount);
         } else {
             tvTransactionDetails.setText("Enter PIN to confirm payment");
         }
 
         // Setup keypad listeners
-        setupKeypadListeners();
+        GridLayout keypad = findViewById(R.id.keypad_grid);
+        for (int i = 0; i < keypad.getChildCount(); i++) {
+            View child = keypad.getChildAt(i);
+            child.setOnClickListener(this);
+        }
 
-        // Header and actions
+        // Header and action buttons
         findViewById(R.id.btn_back).setOnClickListener(this);
         findViewById(R.id.btn_home).setOnClickListener(this);
         findViewById(R.id.btn_enter).setOnClickListener(this);
@@ -61,49 +69,38 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         findViewById(R.id.btn_clear).setOnClickListener(this);
     }
 
-    private void setupKeypadListeners() {
-        GridLayout keypad = findViewById(R.id.keypad_grid);
-        for (int i = 0; i < keypad.getChildCount(); i++) {
-            View child = keypad.getChildAt(i);
-            child.setOnClickListener(this);
-        }
-    }
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
 
         if (id == R.id.btn_back) {
-            Intent intent = new Intent(PinActivity.this, AmountActivity.class);
-            intent.putExtra("name", name);
-            intent.putExtra("phone", phone);
-            startActivity(intent);
             finish();
         } else if (id == R.id.btn_home) {
-            // TODO: Navigate to home
+            // Navigate to home screen
         } else if (id == R.id.btn_clear) {
             if (pinIndex > 0) {
                 pinIndex--;
-                pinDots.get(pinIndex).setBackgroundResource(R.drawable.pin_dot_empty);
+                pinDots[pinIndex].setBackgroundResource(R.drawable.pin_dot_empty);
             }
         } else if (id == R.id.btn_cancel) {
             resetPinDots();
         } else if (id == R.id.btn_enter) {
-            // Validation: ensure 4 digits are entered
             if (pinIndex < PIN_LENGTH) {
                 Toast.makeText(this, "Please enter 4-digit PIN", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // PIN entered successfully → move to success screen
-            Intent intent = new Intent(PinActivity.this, SuccessActivity.class);
-            intent.putExtra("name", name);
-            intent.putExtra("amount", amount);
-            startActivity(intent);
-            finish();
+            // Prevent multiple clicks
+            if (!transactionSaved) {
+                transactionSaved = true;
+                v.setEnabled(false); // disable enter button
+                saveTransactionToFirebase();
+            }
+
         } else if (v instanceof Button) {
+            // Number buttons
             if (pinIndex < PIN_LENGTH) {
-                pinDots.get(pinIndex).setBackgroundResource(R.drawable.pin_dot_filled);
+                pinDots[pinIndex].setBackgroundResource(R.drawable.pin_dot_filled);
                 pinIndex++;
             }
         }
@@ -116,4 +113,34 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         pinIndex = 0;
     }
 
+    private void saveTransactionToFirebase() {
+
+
+        DatabaseReference dbRef = FirebaseDatabase.getInstance()
+                .getReference("sendMoneyToContacts")
+                .child("user123"); // Replace with actual user id
+
+        String dateTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+
+        Map<String, Object> txnData = new HashMap<>();
+        txnData.put("name", name != null ? name : "");
+        txnData.put("phone", phone != null ? phone : "");
+        txnData.put("amount", amount);
+        txnData.put("dateTime", dateTime);
+        txnData.put("type", "UPI Payment"); // or "Recharge" for recharge module
+
+        dbRef.push().setValue(txnData).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(PinActivity.this, "Transaction successful!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(PinActivity.this, SuccessActivity.class);
+                intent.putExtra("name", name);
+                intent.putExtra("amount", amount);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(PinActivity.this, "Failed to save transaction. Try again.", Toast.LENGTH_SHORT).show();
+                transactionSaved = false; // allow retry
+            }
+        });
+    }
 }
