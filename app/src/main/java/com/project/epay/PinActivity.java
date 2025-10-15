@@ -24,7 +24,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
     private TextView tvTransactionDetails;
 
     private String name, phone, amount;
-    private boolean transactionSaved = false; // ✅ ensure one-time save
+    private boolean transactionSaved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
