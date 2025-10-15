@@ -19,16 +19,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set the content view to the XML layout
         setContentView(R.layout.activity_main);
 
-        // 1. Initialize UI components using their defined IDs
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btn_login);
         tvSignupLink = findViewById(R.id.tv_signup_link);
 
-        // 2. Setup click listener for the Login Button
+        // Login button click
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -40,25 +38,24 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                // TODO: Implement actual authentication logic here (e.g., Firebase, API call)
-                Toast.makeText(MainActivity.this, "Attempting to log in...", Toast.LENGTH_SHORT).show();
+                // TODO: Implement actual authentication logic here (e.g., Firebase Auth)
+                Toast.makeText(MainActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
 
-                // Example: Navigate to a main activity upon successful login
-                // Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                // startActivity(mainIntent);
-                // finish();
+                // Navigate to Contacts activity
+                Intent intent = new Intent(MainActivity.this, Contacts.class);
+                startActivity(intent);
+
+                // Optional: close login screen
+                finish();
             }
         });
 
-        // 3. Setup click listener for the Sign Up Link
+        // Sign up link click
         tvSignupLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navigate to the SignupActivity
                 Intent intent = new Intent(MainActivity.this, SignupActivity.class);
                 startActivity(intent);
-                // Optionally, finish the current activity if you don't want to return to it
-                // finish();
             }
         });
     }

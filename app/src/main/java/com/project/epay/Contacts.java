@@ -1,9 +1,15 @@
 package com.project.epay;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.widget.AutoCompleteTextView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,32 +17,103 @@ public class Contacts extends AppCompatActivity {
 
     private RecyclerView recyclerContacts;
     private ContactsAdapter adapter;
-    private List<Contact> contactList;
+    private List<Contact> contactList;         // All contacts
+    private List<Contact> filteredList;        // Filtered contacts
+    private DatabaseReference databaseRef;
+    private AutoCompleteTextView autoSelectContact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact); // ensure layout name matches
+        setContentView(R.layout.activity_contact);
 
-        // Initialize RecyclerView
         recyclerContacts = findViewById(R.id.recycler_contacts);
         recyclerContacts.setLayoutManager(new LinearLayoutManager(this));
 
-        // Create sample contacts
-        contactList = new ArrayList<>();
-        contactList.add(new Contact("Alice", "A", 0xFFE57373, "9876543210"));
-        contactList.add(new Contact("Bob", "B", 0xFF64B5F6, "9123456780"));
-        contactList.add(new Contact("Charlie", "C", 0xFF81C784, "9988776655"));
-        contactList.add(new Contact("David", "D", 0xFFFFB74D, "9012345678"));
-        contactList.add(new Contact("Eve", "E", 0xFFBA68C8, "9876501234"));
-        contactList.add(new Contact("Frank", "F", 0xFFFF8A65, "9123409876"));
-        contactList.add(new Contact("Grace", "G", 0xFFA1887F, "9988112233"));
-        contactList.add(new Contact("Hank", "H", 0xFF4DB6AC, "9001122334"));
-        contactList.add(new Contact("Ivy", "I", 0xFFDCE775, "9112233445"));
-        contactList.add(new Contact("Jack", "J", 0xFF90A4AE, "9223344556"));
+        autoSelectContact = findViewById(R.id.auto_select_contact);
 
-        // Initialize adapter
-        adapter = new ContactsAdapter(this, contactList);
+        contactList = new ArrayList<>();
+        filteredList = new ArrayList<>();
+
+        adapter = new ContactsAdapter(this, filteredList);
         recyclerContacts.setAdapter(adapter);
+
+        databaseRef = FirebaseDatabase.getInstance().getReference();
+
+        fetchContacts();
+
+        setupSearchFilter();
+    }
+
+    private void setupSearchFilter() {
+        autoSelectContact.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence query, int start, int before, int count) {
+                filterContacts(query.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void filterContacts(String query) {
+        filteredList.clear();
+        if (query.isEmpty()) {
+            filteredList.addAll(contactList);
+        } else {
+            for (Contact contact : contactList) {
+                if (contact.getName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredList.add(contact);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    private void fetchContacts() {
+        databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot rootSnapshot) {
+                if (rootSnapshot.hasChild("contacts") && rootSnapshot.child("contacts").hasChild("user123")) {
+                    DataSnapshot userContacts = rootSnapshot.child("contacts").child("user123");
+
+                    contactList.clear();
+
+                    for (DataSnapshot contactSnapshot : userContacts.getChildren()) {
+                        String name = contactSnapshot.child("contactName").getValue(String.class);
+                        String phone = contactSnapshot.child("contactPhone").getValue(String.class);
+
+                        if (name != null && phone != null) {
+                            String initial = name.substring(0, 1).toUpperCase();
+                            int color = 0xFF81C784;
+                            contactList.add(new Contact(name, initial, color, phone));
+                        }
+                    }
+
+                    // ✅ Sort contacts alphabetically by name
+                    contactList.sort((c1, c2) -> c1.getName().compareToIgnoreCase(c2.getName()));
+
+                    filteredList.clear();
+                    filteredList.addAll(contactList);
+
+                    adapter.notifyDataSetChanged();
+
+                    Log.d("FirebaseDebug", "Loaded " + contactList.size() + " contacts (sorted)");
+                } else {
+                    Log.d("FirebaseDebug", "contacts/user123 path not found!");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseDebug", "Error reading database", error.toException());
+            }
+        });
     }
 }

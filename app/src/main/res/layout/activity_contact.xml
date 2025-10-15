@@ -89,19 +89,20 @@
                         android:layout_marginBottom="8dp" />
 
                     <!-- Contact Selection Field -->
-                    <TextView
-                        android:id="@+id/text_select_contact"
+                    <!-- Contact Selection Field -->
+                    <AutoCompleteTextView
+                        android:id="@+id/auto_select_contact"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:text="Select the contact"
+                        android:hint="Select the contact"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:gravity="center_vertical"
-                        android:textColor="#8A000000"
+                        android:textColor="#000000"
                         android:background="@drawable/rounded_input_background"
                         android:drawableEnd="@drawable/ic_arrow_drop_down"
-                        android:clickable="true"
-                        android:focusable="true"/>
+                        android:completionThreshold="1" />
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
