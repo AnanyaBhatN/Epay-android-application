@@ -1,65 +1,84 @@
 package com.project.epay;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class MainActivity extends AppCompatActivity {
 
-    private EditText etEmail, etPassword;
-    private Button btnLogin;
-    private TextView tvSignupLink;
+    private EditText email, password;
+    private Button loginButton;
+    private TextView signUpLink;
+
+    private DatabaseReference databaseUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set the content view to the XML layout
         setContentView(R.layout.activity_main);
 
-        // 1. Initialize UI components using their defined IDs
-        etEmail = findViewById(R.id.et_email);
-        etPassword = findViewById(R.id.et_password);
-        btnLogin = findViewById(R.id.btn_login);
-        tvSignupLink = findViewById(R.id.tv_signup_link);
+        // Firebase reference (matches Signup_Activity)
+        databaseUsers = FirebaseDatabase.getInstance().getReference("Users");
 
-        // 2. Setup click listener for the Login Button
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = etEmail.getText().toString().trim();
-                String password = etPassword.getText().toString().trim();
+        // Get references from XML
+        email = findViewById(R.id.et_login_email);
+        password = findViewById(R.id.et_login_password);
+        loginButton = findViewById(R.id.btn_login);
+        signUpLink = findViewById(R.id.tv_login_signup);
 
-                if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Please enter email and password.", Toast.LENGTH_SHORT).show();
-                    return;
+        loginButton.setOnClickListener(v -> {
+            String emailInput = email.getText().toString().trim();
+            String passwordInput = password.getText().toString().trim();
+
+            if (emailInput.isEmpty() || passwordInput.isEmpty()) {
+                Toast.makeText(MainActivity.this, "Please enter email and password.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Sanitize email for Firebase key
+            String sanitizedEmail = emailInput.replace(".", "_");
+
+            databaseUsers.child(sanitizedEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        User user = snapshot.getValue(User.class);
+
+                        if (user != null && passwordInput.equals(user.password)) {
+                            Toast.makeText(MainActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+
+                            // Optional: Navigate to DashboardActivity
+                             Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+                             startActivity(intent);
+                             finish();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Incorrect password", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
-                // TODO: Implement actual authentication logic here (e.g., Firebase, API call)
-                Toast.makeText(MainActivity.this, "Attempting to log in...", Toast.LENGTH_SHORT).show();
-
-                // Example: Navigate to a main activity upon successful login
-                // Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                // startActivity(mainIntent);
-                // finish();
-            }
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Toast.makeText(MainActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
-        // 3. Setup click listener for the Sign Up Link
-        tvSignupLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Navigate to the SignupActivity
-                Intent intent = new Intent(MainActivity.this, SignupActivity.class);
-                startActivity(intent);
-                // Optionally, finish the current activity if you don't want to return to it
-                // finish();
-            }
+        signUpLink.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, Signup_Activity.class));
         });
     }
 }
