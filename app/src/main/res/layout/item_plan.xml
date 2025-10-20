@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/planCardView"
+    android:layout_marginVertical="8dp"
+    android:layout_marginHorizontal="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/light_gray"
+    app:strokeWidth="1dp"
+    android:backgroundTint="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Plan Price -->
+        <TextView
+            android:id="@+id/planPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₹199"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <!-- Plan Details -->
+        <TextView
+            android:id="@+id/planBenefits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1GB/day • Unlimited Calls • 50 SMS/day"
+            android:textSize="14sp"
+            android:textColor="@color/text_gray"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Validity -->
+        <TextView
+            android:id="@+id/planValidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="28 days"
+            android:textSize="14sp"
+            android:textColor="@color/text_gray"
+            android:layout_marginTop="2dp"/>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

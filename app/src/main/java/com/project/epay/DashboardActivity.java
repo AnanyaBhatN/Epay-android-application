@@ -3,7 +3,6 @@ package com.project.epay;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -23,15 +22,29 @@ public class DashboardActivity extends AppCompatActivity {
 
         ImageView profileIcon = findViewById(R.id.profileIcon);
         profileIcon.setOnClickListener(v -> {
-            // Profile placeholder
+            // You can add profile page navigation here later
         });
 
+        // "Pay Anyone" — goes to Contacts
         findViewById(R.id.payAnyoneButton).setOnClickListener(v -> {
             Intent intent = new Intent(DashboardActivity.this, Contacts.class);
             intent.putExtra("emailKey", emailKey);
             startActivity(intent);
         });
 
-        findViewById(R.id.logoutButton).setOnClickListener(v -> finish());
+        // Mobile Recharge button
+        findViewById(R.id.mobileRechargeButton).setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, Recharge.class);
+            intent.putExtra("emailKey", emailKey); // pass logged-in user info
+            startActivity(intent);
+        });
+
+        // ✅ Logout button — go back to MainActivity and clear back stack
+        findViewById(R.id.logoutButton).setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
     }
 }

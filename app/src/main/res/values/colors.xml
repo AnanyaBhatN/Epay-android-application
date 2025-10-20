@@ -29,4 +29,5 @@
     <color name="border_gray">#D1D1D1</color>
     <!--   Success color   -->
     <color name="green_success">#4CAF50</color>
+
 </resources>

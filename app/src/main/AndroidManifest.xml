@@ -25,5 +25,9 @@
         <activity android:name=".SuccessActivity" android:exported="false"/>
         <activity android:name=".PinActivity" android:exported="false"/>
         <activity android:name=".AmountActivity" android:exported="false"/>
+        <activity android:name=".PlanActivity" android:exported="true"/>
+        <activity android:name=".Pinactivity_recharge" android:exported="true"/>
+        <activity android:name=".SuccessActivity_recharge" android:exported="true"/>
+        <activity android:name=".Recharge" android:exported="true"/>
     </application>
 </manifest>
