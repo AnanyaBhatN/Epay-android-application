@@ -2,6 +2,7 @@ package com.project.epay;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText email, password;
     private Button loginButton;
     private TextView signUpLink;
-
     private DatabaseReference databaseUsers;
 
     @Override
@@ -28,10 +28,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Firebase reference (matches Signup_Activity)
         databaseUsers = FirebaseDatabase.getInstance().getReference("Users");
 
-        // Get references from XML
         email = findViewById(R.id.et_login_email);
         password = findViewById(R.id.et_login_password);
         loginButton = findViewById(R.id.btn_login);
@@ -46,27 +44,32 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // Sanitize email for Firebase key
             String sanitizedEmail = emailInput.replace(".", "_");
 
             databaseUsers.child(sanitizedEmail).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        User user = snapshot.getValue(User.class);
+                    if (!snapshot.exists()) {
+                        Toast.makeText(MainActivity.this, "User not found. Please sign up first.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                        if (user != null && passwordInput.equals(user.password)) {
-                            Toast.makeText(MainActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+                    User user = snapshot.getValue(User.class);
+                    if (user == null) {
+                        Toast.makeText(MainActivity.this, "User data error!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                            // Optional: Navigate to DashboardActivity
-                             Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
-                             startActivity(intent);
-                             finish();
-                        } else {
-                            Toast.makeText(MainActivity.this, "Incorrect password", Toast.LENGTH_SHORT).show();
-                        }
+                    if (passwordInput.equals(user.password)) {
+                        Toast.makeText(MainActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+                        intent.putExtra("email", user.email);       // display only
+                        intent.putExtra("emailKey", sanitizedEmail); // Firebase key
+                        startActivity(intent);
+                        finish();
                     } else {
-                        Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Incorrect password.", Toast.LENGTH_SHORT).show();
                     }
                 }
 

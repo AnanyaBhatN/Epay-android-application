@@ -20,5 +20,10 @@
 
         <activity android:name=".Signup_Activity" android:exported="false" />
         <activity android:name=".DashboardActivity" android:exported="false"/>
+        <!--  Other Activities  -->
+        <activity android:name=".Contacts" android:exported="true"/>
+        <activity android:name=".SuccessActivity" android:exported="false"/>
+        <activity android:name=".PinActivity" android:exported="false"/>
+        <activity android:name=".AmountActivity" android:exported="false"/>
     </application>
 </manifest>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F6FA"
+    android:fitsSystemWindows="true"
+    tools:context=".PinActivity">
+
+    <!-- Header Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="12dp">
+
+            <!-- Back -->
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Back"/>
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Pay Anyone"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="18sp"/>
+
+            <!-- Home -->
+            <ImageView
+                android:id="@+id/btn_home"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/baseline_home"
+                android:contentDescription="Home Button"
+                android:layout_margin="8dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- PIN + Keypad Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_pin"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:layout_constraintTop_toBottomOf="@id/card_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tv_title_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enter PIN"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Transaction Details -->
+            <TextView
+                android:id="@+id/tv_transaction_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="To Anchal | Send Amt: ₹999"
+                android:textSize="14sp"
+                android:textColor="#888888"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_pin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- PIN Dots -->
+            <LinearLayout
+                android:id="@+id/pin_dots_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_transaction_details"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <View
+                    android:id="@+id/pin_dot_1"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/pin_dot_empty"/>
+
+                <View
+                    android:id="@+id/pin_dot_2"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/pin_dot_empty"/>
+
+                <View
+                    android:id="@+id/pin_dot_3"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/pin_dot_empty"/>
+
+                <View
+                    android:id="@+id/pin_dot_4"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/pin_dot_empty"/>
+            </LinearLayout>
+
+            <!-- Keypad -->
+            <GridLayout
+                android:id="@+id/keypad_grid"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="48dp"
+                android:columnCount="3"
+                android:rowCount="4"
+                android:alignmentMode="alignMargins"
+                android:rowOrderPreserved="false"
+                app:layout_constraintTop_toBottomOf="@id/pin_dots_container"
+                app:layout_constraintBottom_toTopOf="@id/btn_enter">
+
+                <!-- Row 1 -->
+                <Button android:id="@+id/btn_1" android:text="1" style="@style/KeypadButton"/>
+                <Button android:id="@+id/btn_2" android:text="2" style="@style/KeypadButton"/>
+                <Button android:id="@+id/btn_3" android:text="3" style="@style/KeypadButton"/>
+
+                <!-- Row 2 -->
+                <Button android:id="@+id/btn_4" android:text="4" style="@style/KeypadButton"/>
+                <Button android:id="@+id/btn_5" android:text="5" style="@style/KeypadButton"/>
+                <Button android:id="@+id/btn_6" android:text="6" style="@style/KeypadButton"/>
+
+                <!-- Row 3 -->
+                <Button android:id="@+id/btn_7" android:text="7" style="@style/KeypadButton"/>
+                <Button android:id="@+id/btn_8" android:text="8" style="@style/KeypadButton"/>
+                <Button android:id="@+id/btn_9" android:text="9" style="@style/KeypadButton"/>
+
+                <!-- Row 4 -->
+                <Button
+                    android:id="@+id/btn_clear"
+                    android:text="Clear"
+                    style="@style/KeypadButton"
+                    android:minWidth="0dp"
+                    android:maxLines="1"
+                    android:textSize="16sp"
+                    android:ellipsize="end"
+                    android:padding="8dp"/>
+                <Button android:id="@+id/btn_0" android:text="0" style="@style/KeypadButton"/>
+                <Button
+                    android:id="@+id/btn_cancel"
+                    android:text="Cancel"
+                    style="@style/KeypadButton"
+                    android:minWidth="0dp"
+                    android:maxLines="1"
+                    android:textSize="16sp"
+                    android:ellipsize="end"
+                    android:padding="8dp"/>
+            </GridLayout>
+
+            <!-- Enter Button -->
+            <Button
+                android:id="@+id/btn_enter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/primary_blue"
+                android:text="Enter"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:paddingVertical="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:stateListAnimator="@null"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
