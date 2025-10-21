@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F6FA"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    tools:context=".PinActivity">
 
     <!-- Header Card -->
     <androidx.cardview.widget.CardView
@@ -41,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Check Balance"
+                android:text="Add To Wallet"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="18sp"/>
@@ -100,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Enter PIN to check balance"
+                android:text="To add amount to your wallet "
                 android:textSize="16sp"
                 android:textColor="#888888"
                 app:layout_constraintTop_toBottomOf="@id/tv_title_pin"

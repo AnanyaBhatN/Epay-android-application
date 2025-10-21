@@ -203,28 +203,52 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
 
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-        Map<String, Object> txnData = new HashMap<>();
-        txnData.put("recipientUpi", recipientUpi);
-        txnData.put("amount", amount);
-        txnData.put("dateTime", dateTime);
-        txnData.put("status", "Success");
+        // --- Sender transaction (money sent) ---
+        Map<String, Object> senderTxn = new HashMap<>();
+        senderTxn.put("recipientUpi", recipientUpi);
+        senderTxn.put("amount", amount);
+        senderTxn.put("dateTime", dateTime);
+        senderTxn.put("status", "Success");
+        senderTxn.put("type", "Sent");
 
-        transactionsRef.child(txnId).setValue(txnData)
+        // Save in sender's transaction node
+        transactionsRef.child(txnId).setValue(senderTxn)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Payment successful!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Pin_paywithupi.this, SuccessActivity.class);
-                    intent.putExtra("recipientUpi", recipientUpi);
-                    intent.putExtra("amount", amount);
-                    intent.putExtra("email", email);
-                    intent.putExtra("emailKey", email.replace(".", "_"));
-                    startActivity(intent);
-                    finish();
+
+                    // --- Receiver transaction (money received) ---
+                    String receiverKey = recipientUpi.replace("@", "_").replace(".", "_"); // safe key
+                    DatabaseReference receiverTransRef = FirebaseDatabase.getInstance()
+                            .getReference("transactions")
+                            .child(receiverKey);
+
+                    Map<String, Object> receiverTxn = new HashMap<>();
+                    receiverTxn.put("senderUpi", email.replace(".", "_")); // optional: sender’s UPI/email
+                    receiverTxn.put("amount", amount);
+                    receiverTxn.put("dateTime", dateTime);
+                    receiverTxn.put("status", "Success");
+                    receiverTxn.put("type", "Received");
+
+                    receiverTransRef.push().setValue(receiverTxn)
+                            .addOnSuccessListener(v -> {
+                                Toast.makeText(this, "Payment successful!", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(Pin_paywithupi.this, SuccessActivity.class);
+                                intent.putExtra("recipientUpi", recipientUpi);
+                                intent.putExtra("amount", amount);
+                                intent.putExtra("email", email);
+                                intent.putExtra("emailKey", email.replace(".", "_"));
+                                startActivity(intent);
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Receiver transaction save failed.", Toast.LENGTH_SHORT).show();
+                            });
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Transaction failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     transactionInProgress = false;
                 });
     }
+
 
     private void goToDashboard() {
         Intent intent = new Intent(Pin_paywithupi.this, DashboardActivity.class);

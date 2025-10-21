@@ -46,8 +46,14 @@
         <activity android:name=".OfferMainActivity" android:exported="true"/>
         <activity android:name=".OffersActivity" android:exported="false"/>
 
+        <activity android:name=".CheckBalanceActivity" android:exported="false"/>
+        <activity android:name=".BalanceActivity" android:exported="false"/>
 
         <activity android:name=".PayWithUpi" android:exported="true"/>
         <activity android:name=".Pin_paywithupi" android:exported="false"/>
+
+        <activity android:name=".AddAmountActivity" android:exported="false"/>
+        <activity android:name=".EnterPin" android:exported="true"/>
+        <activity android:name=".AddSuccessActivity" android:exported="false"/>
     </application>
 </manifest>
