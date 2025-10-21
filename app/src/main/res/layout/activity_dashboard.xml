@@ -14,7 +14,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,7 +47,6 @@
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Wallet Balance Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,7 +77,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Money Management Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -107,32 +104,26 @@
                     android:columnCount="3"
                     android:rowCount="2">
 
-                    <!-- Bank -->
                     <LinearLayout android:id="@+id/bankButton" style="@style/MoneyManagementButton">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_bank"/>
                         <TextView style="@style/MoneyManagementText" android:text="Bank"/>
                     </LinearLayout>
-                    <!-- Pay Anyone -->
                     <LinearLayout android:id="@+id/payAnyoneButton" style="@style/MoneyManagementButton">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_pay_anyone"/>
                         <TextView style="@style/MoneyManagementText" android:text="Pay Anyone"/>
                     </LinearLayout>
-                    <!-- Check Balance -->
                     <LinearLayout android:id="@+id/checkBalanceButton" style="@style/MoneyManagementButton">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_check_balance"/>
                         <TextView style="@style/MoneyManagementText" android:text="Check Balance"/>
                     </LinearLayout>
-                    <!-- Add to Wallet -->
                     <LinearLayout android:id="@+id/addToWalletButton" style="@style/MoneyManagementButton">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_add_to_wallet"/>
                         <TextView style="@style/MoneyManagementText" android:text="Add to wallet"/>
                     </LinearLayout>
-                    <!-- Transaction History -->
                     <LinearLayout android:id="@+id/transactionHistoryButton" style="@style/MoneyManagementButton">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_transaction_history"/>
                         <TextView style="@style/MoneyManagementText" android:text="Transaction history"/>
                     </LinearLayout>
-                    <!-- Pay with UPI -->
                     <LinearLayout android:id="@+id/payWithUpiButton" style="@style/MoneyManagementButton">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_pay_with_upi"/>
                         <TextView style="@style/MoneyManagementText" android:text="Pay with UPI"/>
@@ -142,7 +133,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Recharge / Bill Pay Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -168,22 +158,18 @@
                     android:layout_height="wrap_content"
                     android:columnCount="2"
                     android:rowCount="2">
-                    <!-- Mobile Recharge -->
                     <LinearLayout android:id="@+id/mobileRechargeButton" android:layout_columnWeight="1" style="@style/MoneyManagementButton">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_mobile_recharge"/>
                         <TextView style="@style/MoneyManagementText" android:text="Mobile Recharge"/>
                     </LinearLayout>
-                    <!-- Electricity (Disabled) -->
                     <LinearLayout android:id="@+id/electricityButton" android:clickable="false" android:layout_columnWeight="1" style="@style/MoneyManagementButtonDisabled">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_electricity"/>
                         <TextView style="@style/MoneyManagementText" android:text="Electricity"/>
                     </LinearLayout>
-                    <!-- Cable TV (Disabled) -->
                     <LinearLayout android:id="@+id/cableTvButton" android:clickable="false" android:layout_columnWeight="1" style="@style/MoneyManagementButtonDisabled">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_cable_tv"/>
                         <TextView style="@style/MoneyManagementText" android:text="Cable TV"/>
                     </LinearLayout>
-                    <!-- Gas (Disabled) -->
                     <LinearLayout android:id="@+id/gasButton" android:clickable="false" android:layout_columnWeight="1" style="@style/MoneyManagementButtonDisabled">
                         <ImageView style="@style/MoneyManagementIcon" android:src="@drawable/ic_gas"/>
                         <TextView style="@style/MoneyManagementText" android:text="Gas"/>
@@ -192,7 +178,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Offers & Rewards Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/offersRewardsButton"
             android:layout_width="match_parent"
@@ -215,16 +200,10 @@
                     android:textColor="#2D3748"
                     android:textStyle="bold"
                     android:layout_centerVertical="true"/>
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_arrow_forward"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"/>
+
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Logout Button -->
         <Button
             android:id="@+id/logoutButton"
             android:layout_width="match_parent"
