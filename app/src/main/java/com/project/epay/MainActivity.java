@@ -2,6 +2,10 @@ package com.project.epay;
 
 import android.content.Intent;
 import android.os.Bundle;
+// --- ADD THESE IMPORTS ---
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+// ---
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
         databaseUsers = FirebaseDatabase.getInstance().getReference("Users");
 
-        email = findViewById(R.id.et_login_email);
-        password = findViewById(R.id.et_login_password);
+        email = findViewById(R.id.et_email);
+        password = findViewById(R.id.et_password);
         loginButton = findViewById(R.id.btn_login);
         signUpLink = findViewById(R.id.tv_login_signup);
 
@@ -62,6 +66,16 @@ public class MainActivity extends AppCompatActivity {
 
                     if (passwordInput.equals(user.password)) {
                         Toast.makeText(MainActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+
+                        // --- THIS IS THE NEW CODE TO FIX THE ERROR ---
+                        // Save the user's *original* email to SharedPreferences
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        SharedPreferences.Editor editor = prefs.edit();
+
+                        // This key MUST match the one in rachana_SetPinActivity
+                        editor.putString("user_email_key", emailInput);
+                        editor.apply();
+                        // --- END OF NEW CODE ---
 
                         Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
                         intent.putExtra("email", user.email);       // display only

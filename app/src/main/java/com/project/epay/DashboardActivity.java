@@ -25,6 +25,13 @@ public class DashboardActivity extends AppCompatActivity {
             // You can add profile page navigation here later
         });
 
+        // "Bank" button
+        findViewById(R.id.bankButton).setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, BankSelectionActivity.class);
+            intent.putExtra("emailKey", emailKey); // pass logged-in user info
+            startActivity(intent);
+        });
+
         // "Pay Anyone" — goes to Contacts
         findViewById(R.id.payAnyoneButton).setOnClickListener(v -> {
             Intent intent = new Intent(DashboardActivity.this, Contacts.class);
@@ -38,6 +45,15 @@ public class DashboardActivity extends AppCompatActivity {
             intent.putExtra("emailKey", emailKey); // pass logged-in user info
             startActivity(intent);
         });
+
+        // --- NEW CODE ---
+        // "Offers & Rewards" button
+        findViewById(R.id.offersRewardsButton).setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, OfferMainActivity.class);
+            intent.putExtra("emailKey", emailKey); // pass logged-in user info
+            startActivity(intent);
+        });
+        // --- END OF NEW CODE ---
 
         // ✅ Logout button — go back to MainActivity and clear back stack
         findViewById(R.id.logoutButton).setOnClickListener(v -> {
