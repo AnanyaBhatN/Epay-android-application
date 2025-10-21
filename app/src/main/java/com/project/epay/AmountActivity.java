@@ -19,7 +19,7 @@ public class AmountActivity extends AppCompatActivity {
     private Button btnPay;
     private ImageView btnBack, btnHome;
 
-    private String name, phone, userEmailKey;
+    private String name, phone, email, emailKey; // actual email + sanitized key
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +42,21 @@ public class AmountActivity extends AppCompatActivity {
         if (receivedIntent != null) {
             name = receivedIntent.getStringExtra("name");
             phone = receivedIntent.getStringExtra("phone");
-            userEmailKey = receivedIntent.getStringExtra("emailKey");
+            email = receivedIntent.getStringExtra("email");       // actual email
+            emailKey = receivedIntent.getStringExtra("emailKey"); // sanitized emailKey
+        }
+
+        if (email == null || email.isEmpty() || emailKey == null || emailKey.isEmpty()) {
+            Toast.makeText(this, "User not logged in!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
         // Home button → go to DashboardActivity
         btnHome.setOnClickListener(v -> {
             Intent dashboardIntent = new Intent(AmountActivity.this, DashboardActivity.class);
-            dashboardIntent.putExtra("emailKey", userEmailKey); // pass logged-in user
+            dashboardIntent.putExtra("email", email);       // pass actual email
+            dashboardIntent.putExtra("emailKey", emailKey); // pass sanitized key
             startActivity(dashboardIntent);
             finish();
         });
@@ -70,16 +78,12 @@ public class AmountActivity extends AppCompatActivity {
                 return;
             }
 
-            if (userEmailKey == null || userEmailKey.isEmpty()) {
-                Toast.makeText(this, "User not logged in!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             Intent pinIntent = new Intent(AmountActivity.this, PinActivity.class);
             pinIntent.putExtra("name", name);
             pinIntent.putExtra("phone", phone);
             pinIntent.putExtra("amount", amtStr);
-            pinIntent.putExtra("emailKey", userEmailKey);
+            pinIntent.putExtra("email", email);       // pass actual email
+            pinIntent.putExtra("emailKey", emailKey); // pass sanitized key
             startActivity(pinIntent);
         });
     }

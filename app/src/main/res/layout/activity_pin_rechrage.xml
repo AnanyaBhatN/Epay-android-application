@@ -19,7 +19,9 @@
         app:cardElevation="6dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="false"
+        android:focusable="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,7 +36,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_arrow_back"
-                android:contentDescription="Back"/>
+                android:contentDescription="Back" />
 
             <!-- Title -->
             <TextView
@@ -45,19 +47,21 @@
                 android:text="Pay Anyone"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:textSize="18sp"/>
+                android:textSize="18sp" />
 
             <!-- Home -->
             <ImageView
                 android:id="@+id/btn_home"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
+                android:layout_margin="8dp"
                 android:src="@drawable/baseline_home"
                 android:contentDescription="Home Button"
-                android:layout_margin="8dp"
                 android:clickable="true"
-                android:focusable="true" />
-
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/black"
+                android:visibility="visible" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -94,7 +98,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Transaction Details (Updated Line) -->
+            <!-- Transaction Details -->
             <TextView
                 android:id="@+id/tv_transaction_details"
                 android:layout_width="wrap_content"
@@ -162,22 +166,18 @@
                 app:layout_constraintTop_toBottomOf="@id/pin_dots_container"
                 app:layout_constraintBottom_toTopOf="@id/btn_enter">
 
-                <!-- Row 1 -->
                 <Button android:id="@+id/btn_1" android:text="1" style="@style/KeypadButton"/>
                 <Button android:id="@+id/btn_2" android:text="2" style="@style/KeypadButton"/>
                 <Button android:id="@+id/btn_3" android:text="3" style="@style/KeypadButton"/>
 
-                <!-- Row 2 -->
                 <Button android:id="@+id/btn_4" android:text="4" style="@style/KeypadButton"/>
                 <Button android:id="@+id/btn_5" android:text="5" style="@style/KeypadButton"/>
                 <Button android:id="@+id/btn_6" android:text="6" style="@style/KeypadButton"/>
 
-                <!-- Row 3 -->
                 <Button android:id="@+id/btn_7" android:text="7" style="@style/KeypadButton"/>
                 <Button android:id="@+id/btn_8" android:text="8" style="@style/KeypadButton"/>
                 <Button android:id="@+id/btn_9" android:text="9" style="@style/KeypadButton"/>
 
-                <!-- Row 4 -->
                 <Button
                     android:id="@+id/btn_clear"
                     android:text="Clear"
@@ -187,7 +187,9 @@
                     android:textSize="16sp"
                     android:ellipsize="end"
                     android:padding="8dp"/>
+
                 <Button android:id="@+id/btn_0" android:text="0" style="@style/KeypadButton"/>
+
                 <Button
                     android:id="@+id/btn_cancel"
                     android:text="Cancel"

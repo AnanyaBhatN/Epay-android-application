@@ -13,18 +13,21 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-import java.util.Random;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactViewHolder> {
 
+    public interface OnContactClickListener {
+        void onContactClick(Contact contact);
+    }
+
     private final Context context;
     private List<Contact> contactList;
-    private final String userEmailKey;
+    private final OnContactClickListener listener;
 
-    public ContactsAdapter(Context context, List<Contact> contactList, String userEmailKey) {
+    public ContactsAdapter(Context context, List<Contact> contactList, OnContactClickListener listener) {
         this.context = context;
         this.contactList = contactList;
-        this.userEmailKey = userEmailKey;
+        this.listener = listener;
     }
 
     @NonNull
@@ -49,11 +52,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
         holder.cardInitial.setBackground(gradient);
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, AmountActivity.class);
-            intent.putExtra("emailKey", userEmailKey);
-            intent.putExtra("name", contact.getName());
-            intent.putExtra("phone", contact.getPhone());
-            context.startActivity(intent);
+            if (listener != null) {
+                listener.onContactClick(contact);
+            }
         });
     }
 

@@ -55,6 +55,15 @@
                     android:textSize="16sp"
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginBottom="32dp" />
+                <EditText
+                    android:id="@+id/et_signup_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="Name"
+                    android:inputType="phone"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:layout_marginBottom="16dp" />
 
                 <EditText
                     android:id="@+id/et_signup_mobile"
@@ -84,26 +93,20 @@
                     android:inputType="textPassword"
                     android:background="@drawable/edittext_background"
                     android:padding="12dp"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="32dp" />
 
-                <CheckBox
-                    android:id="@+id/cb_show_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Show Password"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="24dp"
-                    app:buttonTint="@color/epay_blue" /> <Button
-                android:id="@+id/btn_signup"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:text="@string/button_signup"
-                android:textSize="18sp"
-                android:backgroundTint="@color/epay_blue"
-                android:textColor="@color/white"
-                android:textAllCaps="false"
-                android:layout_marginBottom="24dp" />
+                <Button
+                    android:id="@+id/btn_signup"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:text="@string/button_signup"
+                    android:textSize="18sp"
+                    android:backgroundTint="@color/epay_blue"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:layout_marginBottom="24dp" />
 
+                <!-- Horizontal layout for login link -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -30,6 +30,12 @@
         <activity android:name=".SuccessActivity_recharge" android:exported="true"/>
         <activity android:name=".Recharge" android:exported="true"/>
 
+
+        <activity android:name=".UserSettingsActivity" android:exported="true"/>
+        <activity android:name=".HelpCenterActivity" android:exported="true"/>
+        <activity android:name=".AboutEpayActivity" android:exported="true"/>
+
+
         <!--  bank Activity -->
         <activity android:name=".BankSelectionActivity" android:exported="true"> </activity>
         <activity android:name=".BankDetailsActivity" android:exported="false"/>
@@ -37,7 +43,11 @@
         <activity android:name=".rachana_SuccessActivity" android:exported="false"/>
         -->
         <!-- offers-->
-                <activity android:name=".OfferMainActivity" android:exported="true"/>
-                <activity android:name=".OffersActivity" android:exported="false"/>
+        <activity android:name=".OfferMainActivity" android:exported="true"/>
+        <activity android:name=".OffersActivity" android:exported="false"/>
+
+
+        <activity android:name=".PayWithUpi" android:exported="true"/>
+        <activity android:name=".Pin_paywithupi" android:exported="false"/>
     </application>
 </manifest>

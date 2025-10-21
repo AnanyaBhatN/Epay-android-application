@@ -23,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Signup_Activity extends AppCompatActivity {
 
-    private EditText mobile, email, password;
+    private EditText name, mobile, email, password;
     private Button signUpButton;
     private TextView loginLink;
 
@@ -41,6 +41,7 @@ public class Signup_Activity extends AppCompatActivity {
         databaseUsers = FirebaseDatabase.getInstance().getReference("Users");
 
         // Initialize Views
+        name = findViewById(R.id.et_signup_name);
         mobile = findViewById(R.id.et_signup_mobile);
         email = findViewById(R.id.et_signup_email);
         password = findViewById(R.id.et_signup_password);
@@ -100,14 +101,17 @@ public class Signup_Activity extends AppCompatActivity {
 
     // Save user details to Firebase
     private void saveUserToFirebase(String sanitizedEmail) {
+        String fullName = name.getText().toString().trim();
         String mobileNo = mobile.getText().toString().trim();
         String emailId = email.getText().toString().trim();
         String pass = password.getText().toString().trim();
 
-        User user = new User(mobileNo, emailId, pass);
-
-        // Use sanitized email as unique key
-        databaseUsers.child(sanitizedEmail).setValue(user)
+        // Store as an object or direct key-value pairs
+        DatabaseReference userRef = databaseUsers.child(sanitizedEmail);
+        userRef.child("name").setValue(fullName);
+        userRef.child("mobile").setValue(mobileNo);
+        userRef.child("email").setValue(emailId);
+        userRef.child("password").setValue(pass)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(Signup_Activity.this, "Sign up successful!", Toast.LENGTH_LONG).show();
@@ -121,9 +125,16 @@ public class Signup_Activity extends AppCompatActivity {
 
     // Input Validation
     private boolean validateInputs() {
+        String fullName = name.getText().toString().trim();
         String mobileNo = mobile.getText().toString().trim();
         String emailId = email.getText().toString().trim();
         String pass = password.getText().toString().trim();
+
+        if (fullName.isEmpty()) {
+            name.setError("Name is required");
+            name.requestFocus();
+            return false;
+        }
 
         if (mobileNo.isEmpty()) {
             mobile.setError("Mobile number is required");
@@ -158,3 +169,4 @@ public class Signup_Activity extends AppCompatActivity {
         return true;
     }
 }
+

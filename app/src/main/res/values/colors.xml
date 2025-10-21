@@ -13,39 +13,25 @@
     <!-- contacts -->
     <color name="card_bg">#F5F6F8</color>
     <color name="accent_blue">#2563EB</color>
+    <color name="avatar_blue">#2563EB</color>
     <color name="muted_text">#6B7280</color>
     <!--   Primary colors   -->
     <color name="purple_500">#6200EE</color>
     <color name="purple_700">#3700B3</color>
     <color name="teal_200">#03DAC5</color>
     <color name="primary_blue">#1E88E5</color>
+    <color name="colorPrimaryBlue">#1E88E5</color>
+
     <color name="light_gray_bg">#F5F5F5</color>
     <color name="dark_text">#333333</color>
     <color name="soft_border">#D1D1D1</color>
     <color name="card_gray">#F8FAFC</color>
+
     <!--   Gray tones   -->
     <color name="light_gray">#F5F5F5</color>
     <color name="text_gray">#757575</color>
     <color name="border_gray">#D1D1D1</color>
     <!--   Success color   -->
     <color name="green_success">#4CAF50</color>
-    <!-- bank  -->
-    <color name="colorPrimaryBlue">#2196F3</color>
     <color name="colorSuccessGreen">#4CAF50</color>
-    <!-- offers -->
-
-    <color name="background_light_grey">#F8F8F8</color>
-    <color name="header_background">#FFFFFF</color>
-    <color name="text_grey">#8E8E93</color>
-    <color name="separator_line">#E0E0E0</color>
-    <color name="icon_zomato_red">#CB202D</color>
-    <color name="icon_boat_blue">#0A84FF</color>
-    <color name="icon_beauty_green">#25D366</color>
-    <color name="icon_fashion_pink">#E91E63</color>
-    <color name="icon_health_orange">#FF9800</color>
-    <color name="checkbox_checked">#0A84FF</color>
-    <color name="checkbox_unchecked">#D1D1D6</color>
-    <color name="dialog_bg_white">#FFFFFF</color>
-    <color name="dialog_success_green">#25D366</color>
-
 </resources>

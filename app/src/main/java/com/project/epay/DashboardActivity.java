@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class DashboardActivity extends AppCompatActivity {
 
+    private String email;
     private String emailKey;
 
     @Override
@@ -14,15 +15,28 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        emailKey = getIntent().getStringExtra("emailKey");
-        if (emailKey == null || emailKey.isEmpty()) {
+        // Get email from login activity
+        email = getIntent().getStringExtra("email");
+
+        // If no email found, return to login
+        if (email == null || email.isEmpty()) {
+            Intent intent = new Intent(DashboardActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
             finish();
             return;
         }
 
+        // Convert email to valid Firebase key
+        emailKey = email.replace(".", "_");
+
+        // Profile icon → open user settings
         ImageView profileIcon = findViewById(R.id.profileIcon);
         profileIcon.setOnClickListener(v -> {
-            // You can add profile page navigation here later
+            Intent intent = new Intent(DashboardActivity.this, UserSettingsActivity.class);
+            intent.putExtra("email", email); // actual email (e.g., abc@gmail.com)
+            intent.putExtra("emailKey", emailKey); // encoded key (e.g., abc@gmail_com)
+            startActivity(intent);
         });
 
         // "Bank" button
@@ -32,17 +46,19 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // "Pay Anyone" — goes to Contacts
+        // "Pay Anyone" → Contacts
         findViewById(R.id.payAnyoneButton).setOnClickListener(v -> {
             Intent intent = new Intent(DashboardActivity.this, Contacts.class);
+            intent.putExtra("email", email);
             intent.putExtra("emailKey", emailKey);
             startActivity(intent);
         });
 
-        // Mobile Recharge button
+        // Mobile Recharge → Recharge Activity
         findViewById(R.id.mobileRechargeButton).setOnClickListener(v -> {
             Intent intent = new Intent(DashboardActivity.this, Recharge.class);
-            intent.putExtra("emailKey", emailKey); // pass logged-in user info
+            intent.putExtra("email", email);
+            intent.putExtra("emailKey", emailKey);
             startActivity(intent);
         });
 
@@ -55,7 +71,16 @@ public class DashboardActivity extends AppCompatActivity {
         });
         // --- END OF NEW CODE ---
 
-        // ✅ Logout button — go back to MainActivity and clear back stack
+
+        // "Pay Anyone" → Open PayWithUpi Activity
+        findViewById(R.id.payWithUpiButton).setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, PayWithUpi.class);
+            intent.putExtra("email", email);       // actual email
+            intent.putExtra("emailKey", emailKey); // encoded key
+            startActivity(intent);
+        });
+
+        // Logout → Back to login screen
         findViewById(R.id.logoutButton).setOnClickListener(v -> {
             Intent intent = new Intent(DashboardActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

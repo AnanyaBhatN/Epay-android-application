@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class SuccessActivity extends AppCompatActivity {
 
+    private String email;
     private String emailKey;
 
     @Override
@@ -14,16 +15,27 @@ public class SuccessActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_success);
 
-        // ✅ Get emailKey from previous activity
+        // Get email and emailKey from previous activity
         Intent intent = getIntent();
-        emailKey = intent.getStringExtra("emailKey");
+        email = intent.getStringExtra("email");       // actual email
+        emailKey = intent.getStringExtra("emailKey"); // sanitized key
 
-        // ✅ Home ImageView (like baseline_home)
+        if (email == null || email.isEmpty()) {
+            // If email missing, go to login
+            Intent loginIntent = new Intent(SuccessActivity.this, MainActivity.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
+            finish();
+            return;
+        }
+
+        // Home ImageView (baseline_home)
         ImageView btnHome = findViewById(R.id.btn_home);
         if (btnHome != null) {
             btnHome.setOnClickListener(v -> {
                 Intent homeIntent = new Intent(SuccessActivity.this, DashboardActivity.class);
-                homeIntent.putExtra("emailKey", emailKey);
+                homeIntent.putExtra("email", email);       // pass actual email
+                homeIntent.putExtra("emailKey", emailKey); // pass sanitized key
                 startActivity(homeIntent);
                 finish();
             });
@@ -32,11 +44,16 @@ public class SuccessActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // ✅ Back press also takes you to Dashboard
-        Intent intent = new Intent(SuccessActivity.this, DashboardActivity.class);
-        intent.putExtra("emailKey", emailKey);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
-        finish();
+        // Back press also goes to DashboardActivity
+        if (email != null && !email.isEmpty()) {
+            Intent intent = new Intent(SuccessActivity.this, DashboardActivity.class);
+            intent.putExtra("email", email);       // pass actual email
+            intent.putExtra("emailKey", emailKey); // pass sanitized key
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
