@@ -2,6 +2,11 @@ package com.project.epay;
 
 import android.content.Intent;
 import android.os.Bundle;
+// --- ADD THESE IMPORTS ---
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
+import android.widget.CheckBox;
+// ---
 import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +27,9 @@ public class Signup_Activity extends AppCompatActivity {
     private Button signUpButton;
     private TextView loginLink;
 
+    // --- ADD THIS ---
+    private CheckBox showPasswordCheckbox;
+
     private DatabaseReference databaseUsers;
 
     @Override
@@ -38,6 +46,21 @@ public class Signup_Activity extends AppCompatActivity {
         password = findViewById(R.id.et_signup_password);
         signUpButton = findViewById(R.id.btn_signup);
         loginLink = findViewById(R.id.tv_login_signup);
+
+        // --- ADD THIS CODE FOR SHOW PASSWORD ---
+        showPasswordCheckbox = findViewById(R.id.cb_show_password); // Make sure this ID is in your XML
+        showPasswordCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // Show password
+                password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            } else {
+                // Hide password
+                password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            }
+            // Move cursor to the end
+            password.setSelection(password.length());
+        });
+        // --- END OF NEW CODE ---
 
         // Sign Up Button Click
         signUpButton.setOnClickListener(v -> {

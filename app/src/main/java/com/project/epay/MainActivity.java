@@ -2,9 +2,12 @@ package com.project.epay;
 
 import android.content.Intent;
 import android.os.Bundle;
-// --- ADD THESE IMPORTS ---
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+// --- ADD THESE IMPORTS ---
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
+import android.widget.CheckBox;
 // ---
 import android.util.Log;
 import android.widget.Button;
@@ -27,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView signUpLink;
     private DatabaseReference databaseUsers;
 
+    // --- ADD THIS ---
+    private CheckBox showPasswordCheckbox;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +44,21 @@ public class MainActivity extends AppCompatActivity {
         password = findViewById(R.id.et_password);
         loginButton = findViewById(R.id.btn_login);
         signUpLink = findViewById(R.id.tv_login_signup);
+
+        // --- ADD THIS CODE FOR SHOW PASSWORD ---
+        showPasswordCheckbox = findViewById(R.id.cb_show_password); // Make sure this ID is in your XML
+        showPasswordCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // Show password
+                password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            } else {
+                // Hide password
+                password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            }
+            // Move cursor to the end
+            password.setSelection(password.length());
+        });
+        // --- END OF NEW CODE ---
 
         loginButton.setOnClickListener(v -> {
             String emailInput = email.getText().toString().trim();
