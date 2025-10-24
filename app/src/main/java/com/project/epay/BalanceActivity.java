@@ -2,53 +2,52 @@ package com.project.epay;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class BalanceActivity extends AppCompatActivity {
 
-    private ImageView backArrow;
-    private ImageView homeIcon;
+    private TextView tvBalance;
+    private ImageView btnHome;
+    private String emailKey; // sanitized email
+    private String email;    // actual email
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set the layout for this activity
-        setContentView(R.layout.activity_balance);
+        setContentView(R.layout.balance);
 
-        // Initialize the views from the header
-        backArrow = findViewById(R.id.backArrow);
-        homeIcon = findViewById(R.id.homeIcon);
+        tvBalance = findViewById(R.id.tvBalance);
+        btnHome = findViewById(R.id.btn_home); // make sure your layout has an ImageView with id btnHome
 
-        // Set click listener for the back arrow
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Navigate back to the MainActivity (PIN entry screen)
-                navigateToMain();
-            }
-        });
+        // Get balance and email info from intent
+        double balance = getIntent().getDoubleExtra("balance", 0);
+        emailKey = getIntent().getStringExtra("emailKey"); // sanitized email
+        email = getIntent().getStringExtra("email");       // actual email
 
-        // Set click listener for the home icon
-        homeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Navigate back to the MainActivity (PIN entry screen)
-                navigateToMain();
-            }
+        tvBalance.setText("₹ " + String.format("%.2f", balance));
+
+        // Home button click → DashboardActivity
+        btnHome.setOnClickListener(v -> {
+            Intent intent = new Intent(BalanceActivity.this, DashboardActivity.class);
+            intent.putExtra("email", email);
+            intent.putExtra("emailKey", emailKey);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
         });
     }
 
-    /**
-     * Navigates the user back to the MainActivity.
-     */
-    private void navigateToMain() {
-        Intent intent = new Intent(BalanceActivity.this, checkbalance.class);
-        // Clear the activity stack and start a new task for MainActivity
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+    @Override
+    public void onBackPressed() {
+        // Back also goes to DashboardActivity
+        Intent intent = new Intent(BalanceActivity.this, DashboardActivity.class);
+        intent.putExtra("email", email);
+        intent.putExtra("emailKey", emailKey);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
-        finish(); // Finish this activity
+        finish();
     }
 }
-

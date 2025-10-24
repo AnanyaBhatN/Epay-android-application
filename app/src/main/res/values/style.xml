@@ -56,5 +56,10 @@
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
-
+    <style name="PinDot">
+        <item name="android:layout_width">16dp</item>
+        <item name="android:layout_height">16dp</item>
+        <item name="android:background">@drawable/bg_pin_dot</item>
+        <item name="android:layout_margin">6dp</item>
+    </style>
 </resources>

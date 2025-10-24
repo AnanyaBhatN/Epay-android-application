@@ -7,6 +7,18 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <!--    Transatcion History-->
+    <color name="bg_gray">#F2F3F5</color>
+    <color name="divider">#E6E8EC</color>
+    <color name="text_primary">#1C1C1E</color>
+    <color name="text_secondary">#7A7F87</color>
+    <color name="green_600">#0CAA4E</color>
+    <color name="red_600">#E53935</color>
+    <color name="blue_600">#007AFF</color>
+    <color name="green_pale">#E7F6EE</color>
+    <color name="red_pale">#FDEBEC</color>
+    <color name="gray_pale">#EEF0F3</color>
+8
     <!--  Primary brand blue, used for buttons/accents  -->
     <color name="text_hint">#AAAAAA</color>
     <color name="text_dark">#333333</color>
@@ -26,7 +38,34 @@
     <color name="dark_text">#333333</color>
     <color name="soft_border">#D1D1D1</color>
     <color name="card_gray">#F8FAFC</color>
-
+    <!--  Backgrounds  -->
+    <color name="bg_gray">#F2F3F5</color>
+    <!--  Light app background  -->
+    <color name="divider">#E5E9ED</color>
+    <!--  Light border line  -->
+    <!--  Text  -->
+    <color name="text_primary">#1C1C1E</color>
+    <!--  Dark text  -->
+    <color name="text_secondary">#7A7F87</color>
+    <!--  Gray text  -->
+    <!--  Bright Wallet Blue  -->
+    <!--  Theme Colors  -->
+    <color name="green_600">#0CAA4E</color>
+    <!--  Success green  -->
+    <color name="red_600">#E53935</color>
+    <!--  Red for debit  -->
+    <!--  Pale backgrounds for icons  -->
+    <color name="green_pale">#E7F6EE</color>
+    <!--  Light green background  -->
+    <color name="red_pale">#FDEBEC</color>
+    <!--  Light red background  -->
+    <color name="gray_pale">#EEF0F3</color>
+    <!--  Neutral gray  -->
+    <!--  Buttons / Highlights  -->
+    <color name="blue_primary">#2979FF</color>
+    <!--  For primary buttons (optional)  -->
+    <color name="blue_pressed">#1565C0</color>
+    <!--  Button pressed state  -->
     <!--   Gray tones   -->
     <color name="light_gray">#F5F5F5</color>
     <color name="text_gray">#757575</color>
