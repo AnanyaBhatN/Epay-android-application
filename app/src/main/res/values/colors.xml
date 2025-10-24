@@ -7,6 +7,18 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <!--    Transatcion History-->
+    <color name="bg_gray">#F2F3F5</color>
+    <color name="divider">#E6E8EC</color>
+    <color name="text_primary">#1C1C1E</color>
+    <color name="text_secondary">#7A7F87</color>
+    <color name="green_600">#0CAA4E</color>
+    <color name="red_600">#E53935</color>
+    <color name="blue_600">#007AFF</color>
+    <color name="green_pale">#E7F6EE</color>
+    <color name="red_pale">#FDEBEC</color>
+    <color name="gray_pale">#EEF0F3</color>
+8
     <!--  Primary brand blue, used for buttons/accents  -->
     <color name="text_hint">#AAAAAA</color>
     <color name="text_dark">#333333</color>
