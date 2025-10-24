@@ -41,6 +41,7 @@
             android:src="@drawable/baseline_home"
             android:contentDescription="Home Button"
             android:layout_margin="8dp"
+            android:tint="@color/black"
             android:clickable="true"
             android:focusable="true" />
     </LinearLayout>

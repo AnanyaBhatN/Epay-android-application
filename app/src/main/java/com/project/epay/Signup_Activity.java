@@ -2,6 +2,11 @@ package com.project.epay;
 
 import android.content.Intent;
 import android.os.Bundle;
+// --- ADD THESE IMPORTS ---
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
+import android.widget.CheckBox;
+// ---
 import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,9 +23,12 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Signup_Activity extends AppCompatActivity {
 
-    private EditText mobile, email, password;
+    private EditText name, mobile, email, password;
     private Button signUpButton;
     private TextView loginLink;
+
+    // --- ADD THIS ---
+    private CheckBox showPasswordCheckbox;
 
     private DatabaseReference databaseUsers;
 
@@ -33,11 +41,27 @@ public class Signup_Activity extends AppCompatActivity {
         databaseUsers = FirebaseDatabase.getInstance().getReference("Users");
 
         // Initialize Views
+        name = findViewById(R.id.et_signup_name);
         mobile = findViewById(R.id.et_signup_mobile);
         email = findViewById(R.id.et_signup_email);
         password = findViewById(R.id.et_signup_password);
         signUpButton = findViewById(R.id.btn_signup);
         loginLink = findViewById(R.id.tv_login_signup);
+
+        // --- ADD THIS CODE FOR SHOW PASSWORD ---
+        showPasswordCheckbox = findViewById(R.id.cb_show_password); // Make sure this ID is in your XML
+        showPasswordCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // Show password
+                password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            } else {
+                // Hide password
+                password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            }
+            // Move cursor to the end
+            password.setSelection(password.length());
+        });
+        // --- END OF NEW CODE ---
 
         // Sign Up Button Click
         signUpButton.setOnClickListener(v -> {
@@ -77,14 +101,17 @@ public class Signup_Activity extends AppCompatActivity {
 
     // Save user details to Firebase
     private void saveUserToFirebase(String sanitizedEmail) {
+        String fullName = name.getText().toString().trim();
         String mobileNo = mobile.getText().toString().trim();
         String emailId = email.getText().toString().trim();
         String pass = password.getText().toString().trim();
 
-        User user = new User(mobileNo, emailId, pass);
-
-        // Use sanitized email as unique key
-        databaseUsers.child(sanitizedEmail).setValue(user)
+        // Store as an object or direct key-value pairs
+        DatabaseReference userRef = databaseUsers.child(sanitizedEmail);
+        userRef.child("name").setValue(fullName);
+        userRef.child("mobile").setValue(mobileNo);
+        userRef.child("email").setValue(emailId);
+        userRef.child("password").setValue(pass)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(Signup_Activity.this, "Sign up successful!", Toast.LENGTH_LONG).show();
@@ -98,9 +125,16 @@ public class Signup_Activity extends AppCompatActivity {
 
     // Input Validation
     private boolean validateInputs() {
+        String fullName = name.getText().toString().trim();
         String mobileNo = mobile.getText().toString().trim();
         String emailId = email.getText().toString().trim();
         String pass = password.getText().toString().trim();
+
+        if (fullName.isEmpty()) {
+            name.setError("Name is required");
+            name.requestFocus();
+            return false;
+        }
 
         if (mobileNo.isEmpty()) {
             mobile.setError("Mobile number is required");
@@ -135,3 +169,4 @@ public class Signup_Activity extends AppCompatActivity {
         return true;
     }
 }
+

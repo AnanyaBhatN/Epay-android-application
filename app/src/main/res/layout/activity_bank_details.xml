@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/imgBack"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/tvHeaderTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Add Bank Account"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imgClose"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_action_home"
+                app:tint="@color/black" />
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingVertical="16dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/tvSelectedBank"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="12dp"
+                    android:text="Selected Bank: "
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etAccountNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/edittext_bank"
+                    android:hint="Enter Account No."
+                    android:inputType="number"
+                    android:padding="12dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="Card Details"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etCardNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/edittext_bank"
+                    android:hint="Enter card number"
+                    android:inputType="number"
+                    android:padding="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/etExpiry"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/edittext_bank"
+                        android:hint="MM/YY"
+                        android:inputType="text"
+                        android:padding="12dp" />
+
+                    <View
+                        android:layout_width="12dp"
+                        android:layout_height="wrap_content" />
+
+                    <EditText
+                        android:id="@+id/etCvv"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/edittext_bank"
+                        android:hint="CVV"
+                        android:inputType="numberPassword"
+                        android:padding="12dp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnNextDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="18dp"
+                    android:backgroundTint="@color/colorPrimaryBlue"
+                    android:text="Next" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
+</LinearLayout>

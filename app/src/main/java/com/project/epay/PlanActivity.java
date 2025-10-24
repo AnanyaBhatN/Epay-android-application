@@ -18,9 +18,9 @@ public class PlanActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private PlanAdapter adapter;
     private Button nextButton;
-    ImageView btnHome;
+    private ImageView btnHome;
 
-    private String mobile, operator, emailKey;
+    private String mobile, operator, email, emailKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +34,14 @@ public class PlanActivity extends AppCompatActivity {
         // Receive data from RechargeActivity
         mobile = getIntent().getStringExtra("mobile");
         operator = getIntent().getStringExtra("operator");
-        emailKey = getIntent().getStringExtra("emailKey"); // logged-in user email
+        email = getIntent().getStringExtra("email");       // actual email
+        emailKey = getIntent().getStringExtra("emailKey"); // sanitized key
 
-        if (mobile == null || operator == null || emailKey == null) {
+        if (mobile == null || operator == null || email == null || emailKey == null) {
+            // If any required data missing, go back to login
+            Intent intent = new Intent(PlanActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
             finish();
             return;
         }
@@ -62,6 +67,7 @@ public class PlanActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        // Next button → go to PIN activity
         nextButton.setOnClickListener(v -> {
             Plan selectedPlan = adapter.getSelectedPlan();
             if (selectedPlan != null) {
@@ -69,18 +75,20 @@ public class PlanActivity extends AppCompatActivity {
                 intent.putExtra("mobile", mobile);
                 intent.putExtra("operator", operator);
                 intent.putExtra("amount", selectedPlan.getPrice().replace("₹", ""));
-                intent.putExtra("emailKey", emailKey); // pass logged-in email
+                intent.putExtra("email", email);       // pass actual email
+                intent.putExtra("emailKey", emailKey); // pass sanitized key
                 startActivity(intent);
             } else {
                 Toast.makeText(this, "Please select a plan", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Home button click listener
+        // Home button → DashboardActivity
         if (btnHome != null) {
             btnHome.setOnClickListener(v -> {
                 Intent homeIntent = new Intent(PlanActivity.this, DashboardActivity.class);
-                homeIntent.putExtra("emailKey", emailKey);
+                homeIntent.putExtra("email", email);       // pass actual email
+                homeIntent.putExtra("emailKey", emailKey); // pass sanitized key
                 startActivity(homeIntent);
                 finish();
             });

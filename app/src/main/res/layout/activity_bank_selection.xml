@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/imgBack"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/tvHeaderTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Add Bank Account"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imgClose"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_action_home"
+                app:tint="@color/black" />
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingVertical="16dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="12dp"
+                    android:text="Banks"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <GridLayout
+                    android:id="@+id/gridBanks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="3"
+                    android:useDefaultMargins="true">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <ImageView
+                            android:id="@+id/imgSBI"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/bank_icon_selector"
+                            android:padding="8dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/sbi" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="SBI" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <ImageView
+                            android:id="@+id/imgBOB"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/bank_icon_selector"
+                            android:padding="8dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/bob" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="BOB" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <ImageView
+                            android:id="@+id/imgUnion"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/bank_icon_selector"
+                            android:padding="8dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/union" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Union" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <ImageView
+                            android:id="@+id/imgKotak"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/bank_icon_selector"
+                            android:padding="8dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/kotak" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Kotak" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <ImageView
+                            android:id="@+id/imgCanara"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/bank_icon_selector"
+                            android:padding="8dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/canara" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Canara" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <ImageView
+                            android:id="@+id/imgAxis"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/bank_icon_selector"
+                            android:padding="8dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/axis" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Axis" />
+                    </LinearLayout>
+                </GridLayout>
+                <TextView
+                    android:id="@+id/tvSelected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="18dp"
+                    android:text="" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
+</LinearLayout>

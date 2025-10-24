@@ -25,19 +25,18 @@ public class Pinactivity_recharge extends AppCompatActivity {
     private View[] pinDots;
     private CardView cardPin;
     private TextView tvTransactionDetails;
-    private String mobile, operator, amount, emailKey;
+    private String mobile, operator, amount, email, emailKey;
     private StringBuilder pinBuilder = new StringBuilder();
+    private boolean rechargeSaved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_rechrage);
 
-        // Get references
         cardPin = findViewById(R.id.card_pin);
         tvTransactionDetails = findViewById(R.id.tv_transaction_details);
 
-        // Pin dots (4 dots)
         pinDots = new View[]{
                 findViewById(R.id.pin_dot_1),
                 findViewById(R.id.pin_dot_2),
@@ -50,18 +49,22 @@ public class Pinactivity_recharge extends AppCompatActivity {
         mobile = intent.getStringExtra("mobile");
         operator = intent.getStringExtra("operator");
         amount = intent.getStringExtra("amount");
-        emailKey = intent.getStringExtra("emailKey");
+        email = intent.getStringExtra("email");       // actual email
+        emailKey = intent.getStringExtra("emailKey"); // sanitized emailKey
 
-        if (emailKey == null || emailKey.trim().isEmpty()) {
+        if (email == null || email.trim().isEmpty()) {
             Toast.makeText(this, "User not found. Please log in again.", Toast.LENGTH_SHORT).show();
+            Intent loginIntent = new Intent(Pinactivity_recharge.this, MainActivity.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
             finish();
             return;
         }
 
-        // Replace "." with "_" for Firebase key safety
-        emailKey = emailKey.replace(".", "_");
+        // Sanitize email for Firebase key
+        String sanitizedEmailKey = email.replace(".", "_");
 
-        // Show transaction details
+        // Display transaction details
         String cleanAmount = (amount != null) ? amount.replace("₹", "") : "N/A";
         String detailsText = String.format("Mobile: %s | Operator: %s | Amount: ₹%s",
                 mobile != null ? mobile : "N/A",
@@ -69,7 +72,7 @@ public class Pinactivity_recharge extends AppCompatActivity {
                 cleanAmount);
         tvTransactionDetails.setText(detailsText);
 
-        // Setup keypad buttons
+        // Keypad button setup
         GridLayout keypadGrid = findViewById(R.id.keypad_grid);
         for (int i = 0; i < keypadGrid.getChildCount(); i++) {
             View child = keypadGrid.getChildAt(i);
@@ -86,22 +89,23 @@ public class Pinactivity_recharge extends AppCompatActivity {
             }
         }
 
-        // Enter button click listener
+        // Enter button
         Button btnEnter = findViewById(R.id.btn_enter);
         btnEnter.setOnClickListener(v -> {
             if (pinBuilder.length() == 4) {
-                saveRechargeToFirebase();
+                verifyPin(sanitizedEmailKey); // ✅ Verify PIN before saving recharge
             } else {
                 Toast.makeText(this, "Enter 4-digit PIN", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Optional: Home button if exists in layout
+        // Home button → DashboardActivity
         ImageView btnHome = findViewById(R.id.btn_home);
         if (btnHome != null) {
             btnHome.setOnClickListener(v -> {
                 Intent homeIntent = new Intent(Pinactivity_recharge.this, DashboardActivity.class);
-                homeIntent.putExtra("emailKey", emailKey);
+                homeIntent.putExtra("email", email);       // actual email
+                homeIntent.putExtra("emailKey", sanitizedEmailKey); // sanitized key
                 startActivity(homeIntent);
                 finish();
             });
@@ -129,11 +133,43 @@ public class Pinactivity_recharge extends AppCompatActivity {
         }
     }
 
-    // Save recharge under the specific user's email
-    private void saveRechargeToFirebase() {
+    private void resetPin() {
+        pinBuilder.setLength(0);
+        updateDots();
+    }
+
+    // ✅ Verify PIN before saving recharge
+    private void verifyPin(String sanitizedEmailKey) {
+        String enteredPin = pinBuilder.toString();
+
+        DatabaseReference pinRef = FirebaseDatabase.getInstance()
+                .getReference("BankAccounts")
+                .child(sanitizedEmailKey)
+                .child("pin");
+
+        pinRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                String storedPin = task.getResult().getValue(String.class);
+
+                if (storedPin != null && storedPin.equals(enteredPin)) {
+                    saveRechargeToFirebase(sanitizedEmailKey);
+                } else {
+                    Toast.makeText(Pinactivity_recharge.this, "Invalid PIN. Please try again.", Toast.LENGTH_SHORT).show();
+                    resetPin();
+                }
+            } else {
+                Toast.makeText(Pinactivity_recharge.this, "Unable to verify PIN. Try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void saveRechargeToFirebase(String sanitizedEmailKey) {
+        if (rechargeSaved) return;
+        rechargeSaved = true;
+
         DatabaseReference dbRef = FirebaseDatabase.getInstance()
                 .getReference("Recharges")
-                .child(emailKey); // store under logged-in email
+                .child(sanitizedEmailKey);
 
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
@@ -148,12 +184,14 @@ public class Pinactivity_recharge extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Recharge successful!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Pinactivity_recharge.this, SuccessActivity_recharge.class);
-                    intent.putExtra("emailKey", emailKey);
+                    intent.putExtra("email", email);
+                    intent.putExtra("emailKey", sanitizedEmailKey);
                     startActivity(intent);
                     finish();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to save recharge. Try again.", Toast.LENGTH_SHORT).show();
+                    rechargeSaved = false;
                 });
     }
 }

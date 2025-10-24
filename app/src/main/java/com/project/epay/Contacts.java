@@ -29,7 +29,7 @@ public class Contacts extends AppCompatActivity {
     private List<Contact> contactList;
     private List<Contact> filteredList;
     private AutoCompleteTextView autoSelectContact;
-    private String userEmailKey; // logged-in user
+    private String email, emailKey; // actual email & sanitized key
     private DatabaseReference databaseRef;
 
     @Override
@@ -41,9 +41,11 @@ public class Contacts extends AppCompatActivity {
         recyclerContacts.setLayoutManager(new LinearLayoutManager(this));
         autoSelectContact = findViewById(R.id.auto_select_contact);
 
-        // ✅ Get the logged-in user's emailKey from intent
-        userEmailKey = getIntent().getStringExtra("emailKey");
-        if (userEmailKey == null || userEmailKey.isEmpty()) {
+        // Get logged-in user info from intent
+        email = getIntent().getStringExtra("email");
+        emailKey = getIntent().getStringExtra("emailKey");
+
+        if (email == null || email.isEmpty() || emailKey == null || emailKey.isEmpty()) {
             finish();
             return;
         }
@@ -51,8 +53,16 @@ public class Contacts extends AppCompatActivity {
         contactList = new ArrayList<>();
         filteredList = new ArrayList<>();
 
-        // ✅ Pass correct userEmailKey to adapter
-        adapter = new ContactsAdapter(this, filteredList, userEmailKey);
+        adapter = new ContactsAdapter(this, filteredList, (contact) -> {
+            // On contact click → open AmountActivity with both email and emailKey
+            Intent intent = new Intent(Contacts.this, AmountActivity.class);
+            intent.putExtra("name", contact.getName());
+            intent.putExtra("phone", contact.getPhone());
+            intent.putExtra("email", email);       // pass actual email
+            intent.putExtra("emailKey", emailKey); // pass sanitized emailKey
+            startActivity(intent);
+        });
+
         recyclerContacts.setAdapter(adapter);
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
@@ -60,11 +70,12 @@ public class Contacts extends AppCompatActivity {
         fetchContacts();
         setupSearchFilter();
 
-        // ✅ Home button setup (should be here, not inside fetchContacts)
+        // Home button
         ImageView btnHome = findViewById(R.id.btn_home);
         btnHome.setOnClickListener(v -> {
             Intent intent = new Intent(Contacts.this, DashboardActivity.class);
-            intent.putExtra("emailKey", userEmailKey); // pass current logged-in user
+            intent.putExtra("email", email);
+            intent.putExtra("emailKey", emailKey);
             startActivity(intent);
             finish();
         });
@@ -96,7 +107,7 @@ public class Contacts extends AppCompatActivity {
     }
 
     private void fetchContacts() {
-        // Using shared contacts
+        // Fetch contacts from user123
         databaseRef.child("contacts").child("user123")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -111,7 +122,6 @@ public class Contacts extends AppCompatActivity {
                                     contactList.add(new Contact(name, initial, 0xFF81C784, phone));
                                 }
                             }
-
                             contactList.sort((c1, c2) -> c1.getName().compareToIgnoreCase(c2.getName()));
                             filteredList.clear();
                             filteredList.addAll(contactList);

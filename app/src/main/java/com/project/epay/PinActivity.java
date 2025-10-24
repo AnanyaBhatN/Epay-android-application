@@ -31,8 +31,10 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
     private View[] pinDots = new View[PIN_LENGTH];
     private TextView tvTransactionDetails;
 
-    private String name, phone, amount, emailKey;
+    private String name, phone, amount, email, emailKey;
     private boolean transactionSaved = false;
+
+    private StringBuilder currentPin = new StringBuilder(); // store entered PIN
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +49,22 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
 
         tvTransactionDetails = findViewById(R.id.tv_transaction_details);
 
-        // Get data from AmountActivity
+        // Get data from previous activity
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
         phone = intent.getStringExtra("phone");
         amount = intent.getStringExtra("amount");
-        emailKey = intent.getStringExtra("emailKey");
+        email = intent.getStringExtra("email");       // actual email
+        emailKey = intent.getStringExtra("emailKey"); // sanitized emailKey
 
-        if (emailKey == null || emailKey.trim().isEmpty()) {
+        if (email == null || email.trim().isEmpty() || emailKey == null || emailKey.trim().isEmpty()) {
             Toast.makeText(this, "User not found. Please log in again.", Toast.LENGTH_SHORT).show();
+            Intent loginIntent = new Intent(PinActivity.this, MainActivity.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
             finish();
             return;
         }
-
-        // Replace '.' with '_' for Firebase key
-        emailKey = emailKey.replace(".", "_");
 
         // Show transaction details
         if (name != null && !name.isEmpty()) {
@@ -91,16 +94,10 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
     public void onClick(View v) {
         int id = v.getId();
 
-        if (id == R.id.btn_back) {
-            // Go back to Dashboard instead of just finishing
-            Intent backIntent = new Intent(PinActivity.this, DashboardActivity.class);
-            backIntent.putExtra("emailKey", emailKey);
-            startActivity(backIntent);
-            finish();
-
-        } else if (id == R.id.btn_home) {
-            // Home button -> Dashboard
+        if (id == R.id.btn_back || id == R.id.btn_home) {
+            // Go to DashboardActivity
             Intent homeIntent = new Intent(PinActivity.this, DashboardActivity.class);
+            homeIntent.putExtra("email", email);
             homeIntent.putExtra("emailKey", emailKey);
             startActivity(homeIntent);
             finish();
@@ -109,6 +106,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
             if (pinIndex > 0) {
                 pinIndex--;
                 pinDots[pinIndex].setBackgroundResource(R.drawable.pin_dot_empty);
+                currentPin.deleteCharAt(currentPin.length() - 1);
             }
 
         } else if (id == R.id.btn_cancel) {
@@ -120,16 +118,13 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
                 return;
             }
 
-            if (!transactionSaved) {
-                transactionSaved = true;
-                v.setEnabled(false);
-                saveTransactionToFirebase();
-            }
+            verifyPin(); // ✅ Check PIN from Firebase before saving
 
         } else if (v instanceof Button) {
             // Number buttons
             if (pinIndex < PIN_LENGTH) {
                 pinDots[pinIndex].setBackgroundResource(R.drawable.pin_dot_filled);
+                currentPin.append(((Button) v).getText().toString());
                 pinIndex++;
             }
         }
@@ -140,10 +135,38 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
             dot.setBackgroundResource(R.drawable.pin_dot_empty);
         }
         pinIndex = 0;
+        currentPin.setLength(0);
+    }
+
+    // ✅ Verify PIN before transaction
+    private void verifyPin() {
+        String enteredPin = currentPin.toString();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference("BankAccounts")
+                .child(emailKey)
+                .child("pin");
+
+        ref.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                String storedPin = task.getResult().getValue(String.class);
+
+                if (storedPin != null && storedPin.equals(enteredPin)) {
+                    saveTransactionToFirebase();
+                } else {
+                    Toast.makeText(PinActivity.this, "Invalid PIN. Please try again.", Toast.LENGTH_SHORT).show();
+                    resetPinDots();
+                }
+            } else {
+                Toast.makeText(PinActivity.this, "Unable to verify PIN. Try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void saveTransactionToFirebase() {
-        // Save under SendMoney/<userEmailKey> in Firebase
+        if (transactionSaved) return;
+        transactionSaved = true;
+
         DatabaseReference dbRef = FirebaseDatabase.getInstance()
                 .getReference("SendMoney")
                 .child(emailKey);
@@ -151,7 +174,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
         Map<String, Object> txnData = new HashMap<>();
-        txnData.put("fromEmail", emailKey); // logged-in user
+        txnData.put("fromEmail", email);
         txnData.put("toName", name != null ? name : "");
         txnData.put("toPhone", phone != null ? phone : "");
         txnData.put("amount", amount);
@@ -164,6 +187,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
                 Intent intent = new Intent(PinActivity.this, SuccessActivity.class);
                 intent.putExtra("name", name);
                 intent.putExtra("amount", amount);
+                intent.putExtra("email", email);
                 intent.putExtra("emailKey", emailKey);
                 startActivity(intent);
                 finish();

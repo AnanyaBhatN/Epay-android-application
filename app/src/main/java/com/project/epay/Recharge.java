@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Recharge extends AppCompatActivity {
@@ -12,17 +13,24 @@ public class Recharge extends AppCompatActivity {
     private EditText editTextMobile;
     private LinearLayout opAirtel, opJio, opVi, opBsnl;
     private String selectedOperator = null;
-    private String emailKey; // logged-in user
+    private String email;    // actual logged-in email
+    private String emailKey; // sanitized key for Firebase
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recharge);
 
-        // ✅ Get emailKey from Dashboard
+        // Get email and emailKey from intent
+        email = getIntent().getStringExtra("email");
         emailKey = getIntent().getStringExtra("emailKey");
-        if (emailKey == null || emailKey.isEmpty()) {
-            finish(); // stop if user not found
+
+        if (email == null || email.isEmpty()) {
+            // If no email, go back to login
+            Intent intent = new Intent(Recharge.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
             return;
         }
 
@@ -82,18 +90,20 @@ public class Recharge extends AppCompatActivity {
 
             if (selectedOperator == null) selectedOperator = "Airtel";
 
-            // ✅ Pass emailKey along with mobile & operator
+            // Pass email and emailKey along with mobile & operator
             Intent intent = new Intent(Recharge.this, PlanActivity.class);
             intent.putExtra("mobile", mobile);
             intent.putExtra("operator", selectedOperator);
-            intent.putExtra("emailKey", emailKey); // pass logged-in user
+            intent.putExtra("email", email);       // pass actual email
+            intent.putExtra("emailKey", emailKey); // pass sanitized key
             startActivity(intent);
         });
 
-        // ✅ Home button click listener
+        // Home button → DashboardActivity
         findViewById(R.id.btn_home).setOnClickListener(v -> {
             Intent homeIntent = new Intent(Recharge.this, DashboardActivity.class);
-            homeIntent.putExtra("emailKey", emailKey); // keep user logged-in
+            homeIntent.putExtra("email", email);       // pass actual email
+            homeIntent.putExtra("emailKey", emailKey); // pass sanitized key
             startActivity(homeIntent);
             finish();
         });

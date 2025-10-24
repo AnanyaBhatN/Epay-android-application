@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="#F5F5F5">
+
+    <!-- ✅ Toolbar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:padding="12dp"
+        android:background="@drawable/rounded_card">
+
+        <!-- ✅ Back Icon (LEFT) -->
+        <ImageView
+            android:id="@+id/iv_back_help"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Back"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true" />
+
+        <!-- ✅ Title (CENTER) -->
+        <TextView
+            android:id="@+id/tv_help_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Help Center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_centerInParent="true" />
+
+        <!-- ✅ Home Icon (RIGHT) -->
+        <ImageView
+            android:id="@+id/iv_help_home"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_home"
+            android:contentDescription="Home"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <!-- ✅ Scrollable FAQ Section -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Card 1 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1. How to send money using Epay?"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Open the Epay home screen, go to 'Send Money', enter the recipient's number or UPI ID, enter the amount, and confirm the transaction."
+                        android:textSize="15sp"
+                        android:textColor="#555555" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 2 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2. How can I check transaction history?"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Go to the 'History' section from the dashboard to view all your previous payments and received money."
+                        android:textSize="15sp"
+                        android:textColor="#555555" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 3 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3. What should I do if a payment fails?"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="If money is deducted but not received, it usually gets refunded within 2–3 working days. You can also contact support."
+                        android:textSize="15sp"
+                        android:textColor="#555555" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 4 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4. How to update my phone number?"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Go to 'Profile Settings' and choose 'Update Number'. You will receive an OTP to verify the new number."
+                        android:textSize="15sp"
+                        android:textColor="#555555" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 5 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5. How can I reset my PIN?"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Go to 'Security Settings', select ‘Reset UPI PIN’, enter your bank details, and set a new PIN."
+                        android:textSize="15sp"
+                        android:textColor="#555555" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 6 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="6. How do I contact Epay support?"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Go to 'Help and Support' in the app or send an email to support@epay.com."
+                        android:textSize="15sp"
+                        android:textColor="#555555" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

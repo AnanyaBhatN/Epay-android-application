@@ -15,5 +15,7 @@
     <string name="button_login">Login</string>
     <string name="link_no_account">Don\'t have an account?</string>
     <string name="link_signup">Sign up</string>
-
+    <string name="epay_overview">Epay is a simple, simulated digital wallet application designed to help you manage your money, perform transactions, and pay bills easily. Our goal is to provide a user-friendly and engaging experience that mirrors popular payment apps.</string>
+    <string name="key_features_list"> \u2022 User Authentication (Login And Sign up)\n \u2022 Digital Wallet Management\n \u2022 Mobile Recharge And Bill Payments\n \u2022 Secure Transaction History\n \u2022 Interactive Offers And Rewards </string>
+    <string name="about_project">This application was developed as a project to demonstrate the core functionalities of a modern digital wallet. It\'s a comprehensive example of modular app design, focusing on simplicity and user engagement.</string>
 </resources>
