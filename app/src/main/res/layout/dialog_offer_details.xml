@@ -49,16 +49,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:text="Cancel"/>
-
-                <Button
-                    android:id="@+id/btn_check"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:text="Redeem"
-                    android:backgroundTint="@color/primary_blue"/> </LinearLayout>
+                    android:text="Cancel"
+                    android:textColor="@color/primary_blue"/> <Button
+                android:id="@+id/btn_check"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Redeem"
+                android:backgroundTint="@color/primary_blue"/>
+            </LinearLayout>
 
         </LinearLayout>
 

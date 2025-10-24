@@ -6,24 +6,42 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat; // <-- *** 1. ADD THIS IMPORT ***
 import java.util.ArrayList;
 
 public class OfferMainActivity extends AppCompatActivity {
 
     private CheckBox cbBeauty, cbDaily, cbFashion, cbHealth;
     private Button btnNext;
+    private ImageView ivBack, ivHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.off_activity);
+
+        // --- Header Icon Click Listeners ---
+        ivBack = findViewById(R.id.iv_back);
+        ivHome = findViewById(R.id.iv_home);
+
+        View.OnClickListener goToDashboardListener = v -> {
+            Intent intent = new Intent(OfferMainActivity.this, DashboardActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        };
+
+        ivBack.setOnClickListener(goToDashboardListener);
+        ivHome.setOnClickListener(goToDashboardListener);
 
         // --- CODE TO SET ICON COLORS ---
         TextView tvIconReward1 = findViewById(R.id.tv_icon_reward1);
@@ -35,15 +53,13 @@ public class OfferMainActivity extends AppCompatActivity {
         GradientDrawable background2 = (GradientDrawable) tvIconReward2.getBackground();
         background2.setColor(Color.parseColor("#FF9800")); // Orange for Boat
 
-        // --- NEW: CODE TO HANDLE REWARD CARD CLICKS ---
+        // --- CODE TO HANDLE REWARD CARD CLICKS ---
         CardView cardReward1 = findViewById(R.id.card_reward1);
         CardView cardReward2 = findViewById(R.id.card_reward2);
 
-        // Create Offer objects for the static rewards
         Offer zomatoOffer = new Offer("Daily / Needs", "Zomato", "Get upto ₹100 cashback", "ZOMATO100");
         Offer boatOffer = new Offer("Daily / Needs", "Boat Earphones", "Get upto ₹200 cashback", "BOAT200");
 
-        // Set click listeners
         cardReward1.setOnClickListener(v -> showOfferDetailsDialog(zomatoOffer));
         cardReward2.setOnClickListener(v -> showOfferDetailsDialog(boatOffer));
 
@@ -76,7 +92,7 @@ public class OfferMainActivity extends AppCompatActivity {
         });
     }
 
-    // --- NEW: DIALOG-HANDLING METHODS (Copied from OffersActivity) ---
+    // --- DIALOG-HANDLING METHODS ---
     private void showOfferDetailsDialog(final Offer offer) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -86,6 +102,10 @@ public class OfferMainActivity extends AppCompatActivity {
         TextView dialogDescription = dialog.findViewById(R.id.dialog_description);
         Button btnCancel = dialog.findViewById(R.id.btn_cancel);
         Button btnCheck = dialog.findViewById(R.id.btn_check);
+
+        // --- ** 2. ADD THIS LINE TO SET TEXT COLOR ** ---
+        btnCancel.setTextColor(ContextCompat.getColor(this, R.color.primary_blue));
+        // --- END OF NEW LINE ---
 
         dialogTitle.setText(offer.getTitle());
         dialogDescription.setText(offer.getDescription());
