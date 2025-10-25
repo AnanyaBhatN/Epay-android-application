@@ -49,8 +49,8 @@ public class Pinactivity_recharge extends AppCompatActivity {
         mobile = intent.getStringExtra("mobile");
         operator = intent.getStringExtra("operator");
         amount = intent.getStringExtra("amount");
-        email = intent.getStringExtra("email");       // actual email
-        emailKey = intent.getStringExtra("emailKey"); // sanitized emailKey
+        email = intent.getStringExtra("email");
+        emailKey = intent.getStringExtra("emailKey");
 
         if (email == null || email.trim().isEmpty()) {
             Toast.makeText(this, "User not found. Please log in again.", Toast.LENGTH_SHORT).show();
@@ -104,8 +104,8 @@ public class Pinactivity_recharge extends AppCompatActivity {
         if (btnHome != null) {
             btnHome.setOnClickListener(v -> {
                 Intent homeIntent = new Intent(Pinactivity_recharge.this, DashboardActivity.class);
-                homeIntent.putExtra("email", email);       // actual email
-                homeIntent.putExtra("emailKey", sanitizedEmailKey); // sanitized key
+                homeIntent.putExtra("email", email);
+                homeIntent.putExtra("emailKey", sanitizedEmailKey);
                 startActivity(homeIntent);
                 finish();
             });
@@ -138,7 +138,7 @@ public class Pinactivity_recharge extends AppCompatActivity {
         updateDots();
     }
 
-    // ✅ Verify PIN before saving recharge
+    // ✅ Verify PIN before transaction
     private void verifyPin(String sanitizedEmailKey) {
         String enteredPin = pinBuilder.toString();
 
@@ -152,7 +152,7 @@ public class Pinactivity_recharge extends AppCompatActivity {
                 String storedPin = task.getResult().getValue(String.class);
 
                 if (storedPin != null && storedPin.equals(enteredPin)) {
-                    saveRechargeToFirebase(sanitizedEmailKey);
+                    deductFromWallet(sanitizedEmailKey); // ✅ Deduct money before saving recharge
                 } else {
                     Toast.makeText(Pinactivity_recharge.this, "Invalid PIN. Please try again.", Toast.LENGTH_SHORT).show();
                     resetPin();
@@ -163,6 +163,46 @@ public class Pinactivity_recharge extends AppCompatActivity {
         });
     }
 
+    // ✅ Deduct amount from wallet
+    private void deductFromWallet(String sanitizedEmailKey) {
+        DatabaseReference walletRef = FirebaseDatabase.getInstance()
+                .getReference("wallet")
+                .child(sanitizedEmailKey);
+
+        walletRef.get().addOnCompleteListener(balanceTask -> {
+            if (balanceTask.isSuccessful() && balanceTask.getResult().exists()) {
+                try {
+                    double currentBalance = Double.parseDouble(balanceTask.getResult().getValue().toString());
+                    double rechargeAmount = Double.parseDouble(amount.replace("₹", "").trim());
+
+                    if (currentBalance >= rechargeAmount) {
+                        double newBalance = currentBalance - rechargeAmount;
+
+                        walletRef.setValue(newBalance).addOnCompleteListener(updateTask -> {
+                            if (updateTask.isSuccessful()) {
+                                saveRechargeToFirebase(sanitizedEmailKey); // ✅ Save recharge only after deduction
+                            } else {
+                                Toast.makeText(Pinactivity_recharge.this, "Failed to update wallet balance.", Toast.LENGTH_SHORT).show();
+                                rechargeSaved = false;
+                            }
+                        });
+                    } else {
+                        Toast.makeText(Pinactivity_recharge.this, "Insufficient wallet balance!", Toast.LENGTH_SHORT).show();
+                        rechargeSaved = false;
+                    }
+
+                } catch (NumberFormatException e) {
+                    Toast.makeText(Pinactivity_recharge.this, "Invalid wallet balance format.", Toast.LENGTH_SHORT).show();
+                    rechargeSaved = false;
+                }
+            } else {
+                Toast.makeText(Pinactivity_recharge.this, "Wallet not found for this user.", Toast.LENGTH_SHORT).show();
+                rechargeSaved = false;
+            }
+        });
+    }
+
+    // ✅ Save recharge record in Firebase
     private void saveRechargeToFirebase(String sanitizedEmailKey) {
         if (rechargeSaved) return;
         rechargeSaved = true;

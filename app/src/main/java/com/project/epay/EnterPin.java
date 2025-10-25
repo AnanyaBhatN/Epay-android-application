@@ -21,7 +21,8 @@ public class EnterPin extends AppCompatActivity implements View.OnClickListener 
     private StringBuilder pinBuilder = new StringBuilder();
 
     private double amountToAdd;
-    private String emailKey; // logged-in user's sanitized email
+    private String email;     // actual email
+    private String emailKey;  // sanitized email
     private DatabaseReference walletRef;
 
     @Override
@@ -29,11 +30,12 @@ public class EnterPin extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_pin);
 
-        // Get amount and emailKey from AddAmountActivity
+        // Get data from AddAmountActivity
         amountToAdd = getIntent().getDoubleExtra("amountToAdd", 0);
-        emailKey = getIntent().getStringExtra("userId");
+        email = getIntent().getStringExtra("email");
+        emailKey = getIntent().getStringExtra("emailKey");
 
-        if (emailKey == null || amountToAdd <= 0) {
+        if (email == null || email.isEmpty() || emailKey == null || amountToAdd <= 0) {
             Toast.makeText(this, "Invalid data. Please try again.", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -41,7 +43,7 @@ public class EnterPin extends AppCompatActivity implements View.OnClickListener 
 
         walletRef = FirebaseDatabase.getInstance().getReference("wallet");
 
-        // Initialize PIN dots (keep black)
+        // Initialize PIN dots
         pinDots[0] = findViewById(R.id.pin_dot_1);
         pinDots[1] = findViewById(R.id.pin_dot_2);
         pinDots[2] = findViewById(R.id.pin_dot_3);
@@ -83,7 +85,7 @@ public class EnterPin extends AppCompatActivity implements View.OnClickListener 
             String digit = ((Button) v).getText().toString();
             if (pinBuilder.length() < PIN_LENGTH) {
                 pinBuilder.append(digit);
-                pinDots[pinBuilder.length() - 1].setBackgroundResource(R.drawable.pin_dot_filled); // black dot
+                pinDots[pinBuilder.length() - 1].setBackgroundResource(R.drawable.pin_dot_filled);
             }
         }
     }
@@ -128,17 +130,19 @@ public class EnterPin extends AppCompatActivity implements View.OnClickListener 
             public void onDataChange(DataSnapshot snapshot) {
                 double currentAmount = 0;
                 if (snapshot.exists()) {
-                    Double val = snapshot.getValue(Double.class);
-                    if (val != null) currentAmount = val;
+                    Object val = snapshot.getValue();
+                    if (val instanceof Long) currentAmount = ((Long) val).doubleValue();
+                    else if (val instanceof Double) currentAmount = (Double) val;
                 }
 
                 double updatedAmount = currentAmount + amountToAdd;
 
                 userWalletRef.setValue(updatedAmount)
                         .addOnSuccessListener(aVoid -> {
-                            // Go to AddSuccessActivity after wallet updated
+                            // ✅ Navigate to AddSuccessActivity
                             Intent intent = new Intent(EnterPin.this, AddSuccessActivity.class);
-                            intent.putExtra("emailKey", emailKey);
+                            intent.putExtra("email", email);         // pass actual email
+                            intent.putExtra("emailKey", emailKey);   // pass sanitized key
                             startActivity(intent);
                             finish();
                         })
