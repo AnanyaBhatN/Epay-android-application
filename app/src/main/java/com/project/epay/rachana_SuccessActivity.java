@@ -1,7 +1,7 @@
 package com.project.epay;
 
 import android.os.Bundle;
-import android.widget.Button;
+// import android.widget.Button; // <-- Removed
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
@@ -9,7 +9,7 @@ import androidx.activity.OnBackPressedDispatcher;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class rachana_SuccessActivity extends AppCompatActivity {
-    Button btnGoHome;
+    // Button btnGoHome; // <-- Removed
     TextView tvInfo;
 
     @Override
@@ -17,13 +17,13 @@ public class rachana_SuccessActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rachana_activity_success);
 
-        // --- View Initialization (same as before) ---
+        // --- View Initialization ---
         ImageView imgBack = findViewById(R.id.imgBack);
         ImageView imgClose = findViewById(R.id.imgClose);
         imgBack.setOnClickListener(v -> finishAffinity());
         imgClose.setOnClickListener(v -> finishAffinity());
 
-        btnGoHome = findViewById(R.id.btnGoHome);
+        // btnGoHome = findViewById(R.id.btnGoHome); // <-- Removed
         tvInfo = findViewById(R.id.tvInfo);
 
         // --- Message Logic (same as before) ---
@@ -43,24 +43,16 @@ public class rachana_SuccessActivity extends AppCompatActivity {
             tvInfo.setText(bank + " account has been successfully linked.");
         }
 
-        btnGoHome.setOnClickListener(v -> finishAffinity());
+        // btnGoHome.setOnClickListener(v -> finishAffinity()); // <-- Removed
 
         // --- THIS IS THE UPDATED BACK PRESS LOGIC ---
-        // Get the dispatcher
         OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
-
-        // Create a callback that will finish the entire task (close the flow)
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
-                // This is the same action as your old onBackPressed()
                 finishAffinity();
             }
         };
-
-        // Add the callback to the dispatcher
         dispatcher.addCallback(this, callback);
     }
-
-    // The old onBackPressed() override is no longer needed and can be removed.
 }

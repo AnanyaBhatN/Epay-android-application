@@ -23,6 +23,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@drawable/ic_check_circle"
+                app:tint="@color/green_success"
                 android:contentDescription="Success"/>
 
             <TextView
@@ -31,7 +32,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Redeemed Successfully!"
                 android:textSize="20sp"
-                android:textColor="@color/black"
+                android:textColor="@color/green_success"
                 android:textStyle="bold"/>
 
             <TextView

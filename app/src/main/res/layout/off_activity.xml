@@ -11,21 +11,26 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:cardElevation="4dp"
+        android:layout_height="68dp"
+        android:layout_margin="12dp"
+        app:cardElevation="6dp"
+        app:cardCornerRadius="16dp"
         app:cardBackgroundColor="@android:color/white">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:padding="12dp">
+
             <ImageView
+                android:id="@+id/iv_back"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_arrow_back"
                 android:contentDescription="Back" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -34,15 +39,19 @@
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
             <ImageView
+                android:id="@+id/iv_home"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_home"
                 android:contentDescription="Home" />
+
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -52,7 +61,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -152,7 +163,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Get upto ₹200 cashback"/>
+                            android.text="Get upto ₹200 cashback"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -166,29 +177,34 @@
                 android:textColor="@android:color/black"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"/>
+
             <CheckBox
                 android:id="@+id/cb_beauty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Beauty &amp; Wellness"
+                app:buttonTint="@color/primary_blue"
                 android:textSize="16sp"/>
             <CheckBox
                 android:id="@+id/cb_daily"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Daily / Needs"
+                app:buttonTint="@color/primary_blue"
                 android:textSize="16sp"/>
             <CheckBox
                 android:id="@+id/cb_fashion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Fashion"
+                app:buttonTint="@color/primary_blue"
                 android:textSize="16sp"/>
             <CheckBox
                 android:id="@+id/cb_health"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Health"
+                app:buttonTint="@color/primary_blue"
                 android:textSize="16sp"/>
             <Button
                 android:id="@+id/btn_next"

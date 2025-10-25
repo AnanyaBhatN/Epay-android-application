@@ -17,68 +17,84 @@
         app:layout_constraintVertical_bias="0.4">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:src="@mipmap/ic_epay_logo"
             android:contentDescription="@string/epay_logo_desc"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_title"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@color/epay_dark_blue"
-            android:layout_marginBottom="32dp"/>
+            android:layout_marginBottom="48dp" />
 
         <EditText
             android:id="@+id/et_email"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="56dp"
             android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"/>
+            android:background="@drawable/input_selector"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="24dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="#999999"
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/et_password"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="56dp"
             android:hint="@string/hint_password"
             android:inputType="textPassword"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="12dp"/>
+            android:background="@drawable/input_selector"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="#999999"
+            android:textSize="16sp" />
 
-        <CheckBox
-            android:id="@+id/cb_show_password"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Show Password"
-            android:layout_gravity="start"
+            android:layout_marginBottom="32dp">
+
+            <CheckBox
+                android:id="@+id/cb_show_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show Password"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                app:buttonTint="@color/epay_blue"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/button_login"
+            android:textSize="20sp"
+            android:backgroundTint="@color/epay_blue"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
             android:layout_marginBottom="24dp"
-            app:buttonTint="@color/epay_blue" /> <Button
-        android:id="@+id/btn_login"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:text="@string/button_login"
-        android:textSize="18sp"
-        android:backgroundTint="@color/epay_blue"
-        android:textColor="@color/white"
-        android:textAllCaps="false"
-        android:layout_marginBottom="16dp"/>
+            android:elevation="6dp"
+            app:cornerRadius="12dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/link_no_account"/>
+                android:text="@string/link_no_account"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/tv_login_signup"
@@ -87,7 +103,8 @@
                 android:text="@string/link_signup"
                 android:textStyle="bold"
                 android:textColor="@color/epay_blue"
-                android:padding="4dp"/>
+                android:paddingStart="4dp"
+                android:textSize="14sp"/>
         </LinearLayout>
 
     </LinearLayout>

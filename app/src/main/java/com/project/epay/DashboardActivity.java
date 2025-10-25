@@ -111,7 +111,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         // Bank Offers / Rewards
         findViewById(R.id.offersRewardsButton).setOnClickListener(v -> {
-            Intent intent = new Intent(DashboardActivity.this, OffersActivity.class);
+            Intent intent = new Intent(DashboardActivity.this, OfferMainActivity.class);
             intent.putExtra("email", email);
             intent.putExtra("emailKey", emailKey);
             startActivity(intent);

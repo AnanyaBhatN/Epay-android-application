@@ -15,7 +15,31 @@
     <string name="button_login">Login</string>
     <string name="link_no_account">Don\'t have an account?</string>
     <string name="link_signup">Sign up</string>
-    <string name="epay_overview">Epay is a simple, simulated digital wallet application designed to help you manage your money, perform transactions, and pay bills easily. Our goal is to provide a user-friendly and engaging experience that mirrors popular payment apps.</string>
-    <string name="key_features_list"> \u2022 User Authentication (Login And Sign up)\n \u2022 Digital Wallet Management\n \u2022 Mobile Recharge And Bill Payments\n \u2022 Secure Transaction History\n \u2022 Interactive Offers And Rewards </string>
-    <string name="about_project">This application was developed as a project to demonstrate the core functionalities of a modern digital wallet. It\'s a comprehensive example of modular app design, focusing on simplicity and user engagement.</string>
+    <string name="epay_overview">
+        Epay is a simple, simulated digital wallet application designed to help you manage your money, perform transactions, and pay bills easily. Our goal is to provide a user-friendly and engaging experience that mirrors popular payment apps.
+    </string>
+
+    <string name="key_features_list">
+        \u2022 User Authentication (Login &amp; Sign up)\n
+        \u2022 Digital Wallet Management\n
+        \u2022 Mobile Recharge &amp; Bill Payments\n
+        \u2022 Secure Transaction History\n
+        \u2022 Interactive Offers &amp; Rewards
+    </string>
+
+    <string name="about_project">
+        This application was developed as a project to demonstrate the core functionalities of a modern digital wallet. It\'s a comprehensive example of modular app design, focusing on simplicity and user engagement. Key architectural components used include *MVVM pattern, **Kotlin coroutines, and modern **AndroidX libraries*.
+    </string>
+
+    <string name="security_compliance">
+        Security is paramount, even in a simulated environment. Epay employs *industry-standard encryption (AES-256)* for all stored data. User authentication is secured via *BiometricPrompt API* integration (fingerprint/face unlock) and standard PIN/password methods. We adhere to conceptual KYC (Know Your Customer) guidelines to ensure responsible simulated use.
+    </string>
+
+    <string name="future_roadmap">
+        The team is committed to continuously improving the Epay experience. Planned features include:
+        \n\u2022 *Budgeting Tools:* Automated classification of expenses and monthly budget tracking.
+        \n\u2022 *Virtual Card Integration:* A simulated virtual debit card number for online transactions.
+        \n\u2022 *P2P QR Code:* Generation and scanning of QR codes for quicker in-person transfers.
+        \n\u2022 *Multi-language Support:* Expanding accessibility by translating the application interface.
+    </string>
 </resources>
