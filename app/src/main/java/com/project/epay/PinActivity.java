@@ -48,8 +48,8 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         name = intent.getStringExtra("name");
         phone = intent.getStringExtra("phone");
         amount = intent.getStringExtra("amount");
-        email = intent.getStringExtra("email");       // actual email
-        emailKey = intent.getStringExtra("emailKey"); // sanitized emailKey
+        email = intent.getStringExtra("email");
+        emailKey = intent.getStringExtra("emailKey");
 
         if (email == null || email.trim().isEmpty() || emailKey == null || emailKey.trim().isEmpty()) {
             Toast.makeText(this, "User not found. Please log in again.", Toast.LENGTH_SHORT).show();
@@ -89,7 +89,6 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         int id = v.getId();
 
         if (id == R.id.btn_back || id == R.id.btn_home) {
-            // Go to DashboardActivity
             Intent homeIntent = new Intent(PinActivity.this, DashboardActivity.class);
             homeIntent.putExtra("email", email);
             homeIntent.putExtra("emailKey", emailKey);
@@ -146,7 +145,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
                 String storedPin = task.getResult().getValue(String.class);
 
                 if (storedPin != null && storedPin.equals(enteredPin)) {
-                    saveTransactionToFirebase();
+                    deductFromWallet(); // ✅ Deduct money after PIN verified
                 } else {
                     Toast.makeText(PinActivity.this, "Invalid PIN. Please try again.", Toast.LENGTH_SHORT).show();
                     resetPinDots();
@@ -157,10 +156,47 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         });
     }
 
-    private void saveTransactionToFirebase() {
-        if (transactionSaved) return;
-        transactionSaved = true;
+    // ✅ Deduct money from wallet
+    private void deductFromWallet() {
+        DatabaseReference walletRef = FirebaseDatabase.getInstance()
+                .getReference("wallet")
+                .child(emailKey);
 
+        walletRef.get().addOnCompleteListener(balanceTask -> {
+            if (balanceTask.isSuccessful() && balanceTask.getResult().exists()) {
+                try {
+                    double currentBalance = Double.parseDouble(balanceTask.getResult().getValue().toString());
+                    double transactionAmount = Double.parseDouble(amount);
+
+                    if (currentBalance >= transactionAmount) {
+                        double newBalance = currentBalance - transactionAmount;
+
+                        walletRef.setValue(newBalance).addOnCompleteListener(updateTask -> {
+                            if (updateTask.isSuccessful()) {
+                                saveTransactionRecord(); // ✅ Save transaction after deduction
+                            } else {
+                                Toast.makeText(PinActivity.this, "Failed to update wallet balance.", Toast.LENGTH_SHORT).show();
+                                transactionSaved = false;
+                            }
+                        });
+                    } else {
+                        Toast.makeText(PinActivity.this, "Insufficient balance!", Toast.LENGTH_SHORT).show();
+                        transactionSaved = false;
+                    }
+
+                } catch (NumberFormatException e) {
+                    Toast.makeText(PinActivity.this, "Invalid wallet data format.", Toast.LENGTH_SHORT).show();
+                    transactionSaved = false;
+                }
+            } else {
+                Toast.makeText(PinActivity.this, "Wallet not found for this user.", Toast.LENGTH_SHORT).show();
+                transactionSaved = false;
+            }
+        });
+    }
+
+    // ✅ Save transaction in Firebase
+    private void saveTransactionRecord() {
         DatabaseReference dbRef = FirebaseDatabase.getInstance()
                 .getReference("SendMoney")
                 .child(emailKey);
@@ -186,7 +222,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(PinActivity.this, "Failed to save transaction. Try again.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PinActivity.this, "Failed to save transaction record.", Toast.LENGTH_SHORT).show();
                 transactionSaved = false;
             }
         });

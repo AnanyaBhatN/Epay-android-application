@@ -16,7 +16,8 @@ public class AddAmountActivity extends AppCompatActivity {
     private Button btnPay;
     private ImageView btnBack, btnHome;
 
-    private String userId; // logged-in user
+    private String email;
+    private String emailKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +29,14 @@ public class AddAmountActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnHome = findViewById(R.id.btn_home);
 
-        // Receive logged-in user ID from Dashboard
-        userId = getIntent().getStringExtra("userId");
-        if (userId == null || userId.isEmpty()) {
+        // Receive logged-in user info
+        email = getIntent().getStringExtra("email");
+        emailKey = getIntent().getStringExtra("emailKey");
+
+        if (email == null || email.isEmpty() || emailKey == null || emailKey.isEmpty()) {
             Toast.makeText(this, "User not found. Please login again.", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(AddAmountActivity.this, MainActivity.class));
+            startActivity(new Intent(AddAmountActivity.this, MainActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();
             return;
         }
@@ -41,7 +45,8 @@ public class AddAmountActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> {
             Intent intent = new Intent(AddAmountActivity.this, DashboardActivity.class);
-            intent.putExtra("emailKey", userId);
+            intent.putExtra("email", email);
+            intent.putExtra("emailKey", emailKey);
             startActivity(intent);
         });
 
@@ -60,10 +65,11 @@ public class AddAmountActivity extends AppCompatActivity {
                 return;
             }
 
-            // Pass actual userId and amount to EnterPin
+            // Pass email and emailKey to EnterPin / next step
             Intent intent = new Intent(AddAmountActivity.this, EnterPin.class);
             intent.putExtra("amountToAdd", amount);
-            intent.putExtra("userId", userId);
+            intent.putExtra("email", email);
+            intent.putExtra("emailKey", emailKey);
             startActivity(intent);
         });
     }

@@ -3,7 +3,6 @@ package com.project.epay;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AddSuccessActivity extends AppCompatActivity {
@@ -16,10 +15,10 @@ public class AddSuccessActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_success);
 
-        // Get email and emailKey from previous activity
+        // Receive email and emailKey
         Intent intent = getIntent();
-        email = intent.getStringExtra("email");       // actual email
-        emailKey = intent.getStringExtra("emailKey"); // sanitized key
+        email = intent.getStringExtra("email");
+        emailKey = intent.getStringExtra("emailKey");
 
         // Home button
         ImageView btnHome = findViewById(R.id.btn_home);
@@ -32,13 +31,13 @@ public class AddSuccessActivity extends AppCompatActivity {
     }
 
     private void goToDashboard() {
-        Intent homeIntent = new Intent(AddSuccessActivity.this, DashboardActivity.class);
-        if (email != null && !email.isEmpty() && emailKey != null) {
+        if (email != null && !email.isEmpty() && emailKey != null && !emailKey.isEmpty()) {
+            Intent homeIntent = new Intent(AddSuccessActivity.this, DashboardActivity.class);
             homeIntent.putExtra("email", email);
             homeIntent.putExtra("emailKey", emailKey);
+            homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(homeIntent);
+            finish();
         }
-        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(homeIntent);
-        finish();
     }
 }

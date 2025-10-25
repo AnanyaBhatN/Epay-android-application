@@ -35,6 +35,7 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
     private DatabaseReference contactsRef;
     private DatabaseReference transactionsRef;
     private DatabaseReference bankAccountsRef;
+    private DatabaseReference walletRef;
 
     private boolean transactionInProgress = false;
 
@@ -74,6 +75,7 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
         contactsRef = FirebaseDatabase.getInstance().getReference("contacts").child("user123");
         transactionsRef = FirebaseDatabase.getInstance().getReference("transactions").child(sanitizedEmailKey);
         bankAccountsRef = FirebaseDatabase.getInstance().getReference("BankAccounts").child(sanitizedEmailKey);
+        walletRef = FirebaseDatabase.getInstance().getReference("wallet").child(sanitizedEmailKey);
 
         // Setup keypad
         GridLayout keypad = findViewById(R.id.keypad_grid);
@@ -140,18 +142,18 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    // ✅ Step 1: Verify PIN
     private void verifyPinAndProceed() {
-        // ✅ Fetch PIN from BankAccounts/<emailKey>/pin
         bankAccountsRef.child("pin").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 String storedPin = snapshot.getValue(String.class);
 
                 if (storedPin == null) {
-                    Toast.makeText(Pin_paywithupi.this, "No PIN found in Bank Account. Please set your PIN first.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Pin_paywithupi.this, "No PIN found. Please set your PIN first.", Toast.LENGTH_SHORT).show();
                     transactionInProgress = false;
                 } else if (storedPin.equals(pinBuilder.toString())) {
-                    verifyUpiAndSaveTransaction();
+                    verifyUpiAndDeductMoney(); // ✅ Next step
                 } else {
                     Toast.makeText(Pin_paywithupi.this, "Incorrect PIN. Try again.", Toast.LENGTH_SHORT).show();
                     resetPinDots();
@@ -167,7 +169,8 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    private void verifyUpiAndSaveTransaction() {
+    // ✅ Step 2: Verify UPI ID
+    private void verifyUpiAndDeductMoney() {
         contactsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -182,7 +185,7 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
                 }
 
                 if (upiFound) {
-                    saveTransaction();
+                    deductMoneyFromWallet();
                 } else {
                     Toast.makeText(Pin_paywithupi.this, "UPI ID not found in contacts.", Toast.LENGTH_SHORT).show();
                     transactionInProgress = false;
@@ -197,13 +200,48 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
         });
     }
 
+    // ✅ Step 3: Deduct from Wallet
+    private void deductMoneyFromWallet() {
+        walletRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                try {
+                    double currentBalance = Double.parseDouble(task.getResult().getValue().toString());
+                    double transactionAmount = Double.parseDouble(amount);
+
+                    if (currentBalance >= transactionAmount) {
+                        double newBalance = currentBalance - transactionAmount;
+
+                        walletRef.setValue(newBalance).addOnCompleteListener(updateTask -> {
+                            if (updateTask.isSuccessful()) {
+                                saveTransaction(); // ✅ Proceed
+                            } else {
+                                Toast.makeText(Pin_paywithupi.this, "Failed to update wallet balance.", Toast.LENGTH_SHORT).show();
+                                transactionInProgress = false;
+                            }
+                        });
+                    } else {
+                        Toast.makeText(Pin_paywithupi.this, "Insufficient balance!", Toast.LENGTH_SHORT).show();
+                        transactionInProgress = false;
+                    }
+
+                } catch (NumberFormatException e) {
+                    Toast.makeText(Pin_paywithupi.this, "Invalid wallet balance format.", Toast.LENGTH_SHORT).show();
+                    transactionInProgress = false;
+                }
+            } else {
+                Toast.makeText(Pin_paywithupi.this, "Wallet not found for user.", Toast.LENGTH_SHORT).show();
+                transactionInProgress = false;
+            }
+        });
+    }
+
+    // ✅ Step 4: Save Transaction
     private void saveTransaction() {
         String txnId = transactionsRef.push().getKey();
         if (txnId == null) return;
 
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-        // --- Sender transaction (money sent) ---
         Map<String, Object> senderTxn = new HashMap<>();
         senderTxn.put("recipientUpi", recipientUpi);
         senderTxn.put("amount", amount);
@@ -211,44 +249,22 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
         senderTxn.put("status", "Success");
         senderTxn.put("type", "Sent");
 
-        // Save in sender's transaction node
         transactionsRef.child(txnId).setValue(senderTxn)
                 .addOnSuccessListener(aVoid -> {
-
-                    // --- Receiver transaction (money received) ---
-                    String receiverKey = recipientUpi.replace("@", "_").replace(".", "_"); // safe key
-                    DatabaseReference receiverTransRef = FirebaseDatabase.getInstance()
-                            .getReference("transactions")
-                            .child(receiverKey);
-
-                    Map<String, Object> receiverTxn = new HashMap<>();
-                    receiverTxn.put("senderUpi", email.replace(".", "_")); // optional: sender’s UPI/email
-                    receiverTxn.put("amount", amount);
-                    receiverTxn.put("dateTime", dateTime);
-                    receiverTxn.put("status", "Success");
-                    receiverTxn.put("type", "Received");
-
-                    receiverTransRef.push().setValue(receiverTxn)
-                            .addOnSuccessListener(v -> {
-                                Toast.makeText(this, "Payment successful!", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(Pin_paywithupi.this, SuccessActivity.class);
-                                intent.putExtra("recipientUpi", recipientUpi);
-                                intent.putExtra("amount", amount);
-                                intent.putExtra("email", email);
-                                intent.putExtra("emailKey", email.replace(".", "_"));
-                                startActivity(intent);
-                                finish();
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(this, "Receiver transaction save failed.", Toast.LENGTH_SHORT).show();
-                            });
+                    Toast.makeText(this, "Payment successful!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Pin_paywithupi.this, SuccessActivity.class);
+                    intent.putExtra("recipientUpi", recipientUpi);
+                    intent.putExtra("amount", amount);
+                    intent.putExtra("email", email);
+                    intent.putExtra("emailKey", email.replace(".", "_"));
+                    startActivity(intent);
+                    finish();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Transaction failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     transactionInProgress = false;
                 });
     }
-
 
     private void goToDashboard() {
         Intent intent = new Intent(Pin_paywithupi.this, DashboardActivity.class);
