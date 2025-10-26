@@ -1,76 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="epay_blue">#007AFF</color>
-
-    <color name="epay_dark_blue">#0056B3</color>
-
+    <!-- Basic System Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!--    Transatcion History-->
-    <color name="bg_gray">#F2F3F5</color>
-    <color name="divider">#E6E8EC</color>
-    <color name="text_primary">#1C1C1E</color>
-    <color name="text_secondary">#7A7F87</color>
-    <color name="green_600">#0CAA4E</color>
-    <color name="red_600">#E53935</color>
-    <color name="blue_600">#007AFF</color>
-    <color name="green_pale">#E7F6EE</color>
-    <color name="red_pale">#FDEBEC</color>
-    <color name="gray_pale">#EEF0F3</color>
-8
-    <!--  Primary brand blue, used for buttons/accents  -->
-    <color name="text_hint">#AAAAAA</color>
-    <color name="text_dark">#333333</color>
-    <!-- contacts -->
-    <color name="card_bg">#F5F6F8</color>
+    <!-- Primary Blue Palette -->
+    <color name="colorPrimaryBlue">#1E88E5</color> <!-- Strong Blue for main features -->
+    <color name="colorPrimaryDark">#1565C0</color>
+    <color name="primary_blue">#1E88E5</color> <!-- Duplicate kept for compatibility/clarity -->
+
+    <!-- Accent and Highlight Colors -->
+    <color name="colorAccentBlue">#00BCD4</color> <!-- Bright Blue for Rewards/Accent -->
     <color name="accent_blue">#2563EB</color>
     <color name="avatar_blue">#2563EB</color>
+    <color name="blue_primary">#2979FF</color>
+    <color name="blue_pressed">#1565C0</color>
+    <color name="teal_200">#03DAC5</color>
+
+    <!-- General UI Colors -->
+    <color name="colorBackground">#F0F4F8</color> <!-- Light grey background -->
+    <color name="colorCardBackground">#FFFFFF</color>
+    <color name="light_gray_bg">#F5F5F5</color>
+    <color name="card_bg">#F5F6F8</color>
+    <color name="card_gray">#F8FAFC</color>
+    <color name="bg_gray">#F2F3F5</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="colorDivider">#E2E8F0</color>
+    <color name="divider">#E5E9ED</color>
+    <color name="soft_border">#D1D1D1</color>
+    <color name="border_gray">#D1D1D1</color>
+
+    <!-- Text Colors -->
+    <color name="colorTextPrimary">#1a202c</color>
+    <color name="colorTextSecondary">#4A5568</color>
+    <color name="text_primary">#1C1C1E</color>
+    <color name="text_secondary">#7A7F87</color>
+    <color name="dark_text">#333333</color>
+    <color name="text_dark">#333333</color>
+    <color name="text_hint">#AAAAAA</color>
     <color name="muted_text">#6B7280</color>
-    <!--   Primary colors   -->
+    <color name="text_gray">#757575</color>
+
+    <!-- Status/Action Colors -->
+    <color name="colorLogoutRed">#D32F2F</color> <!-- Standard warning red for Logout -->
+    <color name="red_600">#E53935</color>
+    <color name="red_pale">#FDEBEC</color>
+    <color name="colorSuccessGreen">#4CAF50</color>
+    <color name="green_success">#4CAF50</color>
+    <color name="green_600">#0CAA4E</color>
+    <color name="green_pale">#E7F6EE</color>
+    <color name="gray_pale">#EEF0F3</color>
+
+    <!-- Legacy / Unused in recent layouts but present in source -->
+    <color name="epay_blue">#007AFF</color>
+    <color name="epay_dark_blue">#0056B3</color>
     <color name="purple_500">#6200EE</color>
     <color name="purple_700">#3700B3</color>
-    <color name="teal_200">#03DAC5</color>
-    <color name="primary_blue">#1E88E5</color>
-    <color name="colorPrimaryBlue">#1E88E5</color>
-
-    <color name="light_gray_bg">#F5F5F5</color>
-    <color name="dark_text">#333333</color>
-    <color name="soft_border">#D1D1D1</color>
-    <color name="card_gray">#F8FAFC</color>
-    <!--  Backgrounds  -->
-    <color name="bg_gray">#F2F3F5</color>
-    <!--  Light app background  -->
-    <color name="divider">#E5E9ED</color>
-    <!--  Light border line  -->
-    <!--  Text  -->
-    <color name="text_primary">#1C1C1E</color>
-    <!--  Dark text  -->
-    <color name="text_secondary">#7A7F87</color>
-    <!--  Gray text  -->
-    <!--  Bright Wallet Blue  -->
-    <!--  Theme Colors  -->
-    <color name="green_600">#0CAA4E</color>
-    <!--  Success green  -->
-    <color name="red_600">#E53935</color>
-    <!--  Red for debit  -->
-    <!--  Pale backgrounds for icons  -->
-    <color name="green_pale">#E7F6EE</color>
-    <!--  Light green background  -->
-    <color name="red_pale">#FDEBEC</color>
-    <!--  Light red background  -->
-    <color name="gray_pale">#EEF0F3</color>
-    <!--  Neutral gray  -->
-    <!--  Buttons / Highlights  -->
-    <color name="blue_primary">#2979FF</color>
-    <!--  For primary buttons (optional)  -->
-    <color name="blue_pressed">#1565C0</color>
-    <!--  Button pressed state  -->
-    <!--   Gray tones   -->
-    <color name="light_gray">#F5F5F5</color>
-    <color name="text_gray">#757575</color>
-    <color name="border_gray">#D1D1D1</color>
-    <!--   Success color   -->
-    <color name="green_success">#4CAF50</color>
-    <color name="colorSuccessGreen">#4CAF50</color>
 </resources>
