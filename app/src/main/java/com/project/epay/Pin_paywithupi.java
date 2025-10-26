@@ -24,15 +24,14 @@ import java.util.Map;
 public class Pin_paywithupi extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PIN_LENGTH = 4;
-    private int pinIndex = 0;
     private View[] pinDots = new View[PIN_LENGTH];
+    private StringBuilder pinBuilder = new StringBuilder();
     private TextView tvTransactionDetails;
 
-    private String recipientUpi, amount;
+    private String recipientUpi, recipientName;
+    private int amount;
     private String email, emailKey;
-    private StringBuilder pinBuilder = new StringBuilder();
 
-    private DatabaseReference contactsRef;
     private DatabaseReference transactionsRef;
     private DatabaseReference bankAccountsRef;
     private DatabaseReference walletRef;
@@ -44,46 +43,37 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pin_paywithupi);
 
-        // Get data from Intent
         recipientUpi = getIntent().getStringExtra("recipientUpi");
-        amount = getIntent().getStringExtra("amount");
+        recipientName = getIntent().getStringExtra("recipientName");
+        amount = getIntent().getIntExtra("amount", 0);
         email = getIntent().getStringExtra("email");
         emailKey = getIntent().getStringExtra("emailKey");
 
-        if (email == null || email.trim().isEmpty()) {
-            Toast.makeText(this, "User not found. Please log in again.", Toast.LENGTH_SHORT).show();
-            Intent loginIntent = new Intent(Pin_paywithupi.this, MainActivity.class);
-            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(loginIntent);
+        if (recipientName == null || recipientName.trim().isEmpty() || recipientUpi == null || amount <= 0) {
+            Toast.makeText(this, "Invalid transaction data.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         String sanitizedEmailKey = email.replace(".", "_");
 
-        // Initialize PIN dots
         pinDots[0] = findViewById(R.id.pin_dot_1);
         pinDots[1] = findViewById(R.id.pin_dot_2);
         pinDots[2] = findViewById(R.id.pin_dot_3);
         pinDots[3] = findViewById(R.id.pin_dot_4);
 
-        // Show transaction details
         tvTransactionDetails = findViewById(R.id.tv_transaction_details);
-        tvTransactionDetails.setText("To: " + recipientUpi + " | Amount: ₹" + amount);
+        tvTransactionDetails.setText("To: " + recipientName + " | Amount: ₹" + amount);
 
-        // Firebase references
-        contactsRef = FirebaseDatabase.getInstance().getReference("contacts").child("user123");
         transactionsRef = FirebaseDatabase.getInstance().getReference("transactions").child(sanitizedEmailKey);
         bankAccountsRef = FirebaseDatabase.getInstance().getReference("BankAccounts").child(sanitizedEmailKey);
         walletRef = FirebaseDatabase.getInstance().getReference("wallet").child(sanitizedEmailKey);
 
-        // Setup keypad
         GridLayout keypad = findViewById(R.id.keypad_grid);
         for (int i = 0; i < keypad.getChildCount(); i++) {
             keypad.getChildAt(i).setOnClickListener(this);
         }
 
-        // Buttons
         findViewById(R.id.btn_back).setOnClickListener(this);
         findViewById(R.id.btn_home).setOnClickListener(this);
         findViewById(R.id.btn_enter).setOnClickListener(this);
@@ -95,36 +85,23 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         int id = v.getId();
 
-        // ---*** THIS LOGIC IS CHANGED ***---
-        if (id == R.id.btn_back) {
-            // Go to the previous page (PayWithUpi)
-            finish();
-
-        } else if (id == R.id.btn_home) {
-            // Go to the Dashboard
+        if (id == R.id.btn_home || id == R.id.btn_back) {
             goToDashboard();
-            // ---*** END OF CHANGE ***---
-
         } else if (id == R.id.btn_clear) {
             clearLastDigit();
-
         } else if (id == R.id.btn_cancel) {
             resetPinDots();
-
         } else if (id == R.id.btn_enter) {
             if (pinBuilder.length() < PIN_LENGTH) {
                 Toast.makeText(this, "Please enter 4-digit PIN", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             if (!transactionInProgress) {
                 transactionInProgress = true;
-                verifyPinAndProceed();
+                verifyPinAndDeductMoney();
             }
-
         } else if (v instanceof Button) {
-            String digit = ((Button) v).getText().toString();
-            appendDigit(digit);
+            appendDigit(((Button) v).getText().toString());
         }
     }
 
@@ -149,18 +126,13 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    // ✅ Step 1: Verify PIN
-    private void verifyPinAndProceed() {
+    private void verifyPinAndDeductMoney() {
         bankAccountsRef.child("pin").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 String storedPin = snapshot.getValue(String.class);
-
-                if (storedPin == null) {
-                    Toast.makeText(Pin_paywithupi.this, "No PIN found. Please set your PIN first.", Toast.LENGTH_SHORT).show();
-                    transactionInProgress = false;
-                } else if (storedPin.equals(pinBuilder.toString())) {
-                    verifyUpiAndDeductMoney(); // ✅ Next step
+                if (storedPin != null && storedPin.trim().equals(pinBuilder.toString().trim())) {
+                    deductMoneyFromWallet();
                 } else {
                     Toast.makeText(Pin_paywithupi.this, "Incorrect PIN. Try again.", Toast.LENGTH_SHORT).show();
                     resetPinDots();
@@ -176,63 +148,23 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    // ✅ Step 2: Verify UPI ID
-    private void verifyUpiAndDeductMoney() {
-        contactsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                boolean upiFound = false;
-
-                for (DataSnapshot contactSnap : snapshot.getChildren()) {
-                    String contactUpi = contactSnap.child("upiId").getValue(String.class);
-                    if (recipientUpi.equals(contactUpi)) {
-                        upiFound = true;
-                        break;
-                    }
-                }
-
-                if (upiFound) {
-                    deductMoneyFromWallet();
-                } else {
-                    Toast.makeText(Pin_paywithupi.this, "UPI ID not found in contacts.", Toast.LENGTH_SHORT).show();
-                    transactionInProgress = false;
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Toast.makeText(Pin_paywithupi.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                transactionInProgress = false;
-            }
-        });
-    }
-
-    // ✅ Step 3: Deduct from Wallet
     private void deductMoneyFromWallet() {
         walletRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult().exists()) {
-                try {
-                    double currentBalance = Double.parseDouble(task.getResult().getValue().toString());
-                    double transactionAmount = Double.parseDouble(amount);
+                Integer currentBalance = task.getResult().getValue(Integer.class);
+                if (currentBalance == null) currentBalance = 0;
 
-                    if (currentBalance >= transactionAmount) {
-                        double newBalance = currentBalance - transactionAmount;
-
-                        walletRef.setValue(newBalance).addOnCompleteListener(updateTask -> {
-                            if (updateTask.isSuccessful()) {
-                                saveTransaction(); // ✅ Proceed
-                            } else {
-                                Toast.makeText(Pin_paywithupi.this, "Failed to update wallet balance.", Toast.LENGTH_SHORT).show();
-                                transactionInProgress = false;
-                            }
-                        });
-                    } else {
-                        Toast.makeText(Pin_paywithupi.this, "Insufficient balance!", Toast.LENGTH_SHORT).show();
-                        transactionInProgress = false;
-                    }
-
-                } catch (NumberFormatException e) {
-                    Toast.makeText(Pin_paywithupi.this, "Invalid wallet balance format.", Toast.LENGTH_SHORT).show();
+                if (currentBalance >= amount) {
+                    walletRef.setValue(currentBalance - amount).addOnCompleteListener(updateTask -> {
+                        if (updateTask.isSuccessful()) {
+                            saveTransaction();
+                        } else {
+                            Toast.makeText(Pin_paywithupi.this, "Failed to update wallet balance.", Toast.LENGTH_SHORT).show();
+                            transactionInProgress = false;
+                        }
+                    });
+                } else {
+                    Toast.makeText(Pin_paywithupi.this, "Insufficient balance!", Toast.LENGTH_SHORT).show();
                     transactionInProgress = false;
                 }
             } else {
@@ -242,33 +174,34 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    // ✅ Step 4: Save Transaction
     private void saveTransaction() {
         String txnId = transactionsRef.push().getKey();
         if (txnId == null) return;
 
         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-        Map<String, Object> senderTxn = new HashMap<>();
-        senderTxn.put("recipientUpi", recipientUpi);
-        senderTxn.put("amount", amount);
-        senderTxn.put("dateTime", dateTime);
-        senderTxn.put("status", "Success");
-        senderTxn.put("type", "Sent");
+        Map<String, Object> txn = new HashMap<>();
+        txn.put("recipientUpi", recipientUpi);
+        txn.put("recipientName", recipientName); // fixed
+        txn.put("amount", amount);
+        txn.put("dateTime", dateTime);
+        txn.put("status", "Success");
+        txn.put("type", "Sent");
 
-        transactionsRef.child(txnId).setValue(senderTxn)
+        transactionsRef.child(txnId).setValue(txn)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Payment successful!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Pin_paywithupi.this, SuccessActivity.class);
+                    intent.putExtra("recipientName", recipientName);
                     intent.putExtra("recipientUpi", recipientUpi);
                     intent.putExtra("amount", amount);
                     intent.putExtra("email", email);
-                    intent.putExtra("emailKey", email.replace(".", "_"));
+                    intent.putExtra("emailKey", emailKey);
                     startActivity(intent);
                     finish();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Transaction failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Pin_paywithupi.this, "Transaction failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     transactionInProgress = false;
                 });
     }
@@ -276,15 +209,13 @@ public class Pin_paywithupi extends AppCompatActivity implements View.OnClickLis
     private void goToDashboard() {
         Intent intent = new Intent(Pin_paywithupi.this, DashboardActivity.class);
         intent.putExtra("email", email);
-        intent.putExtra("emailKey", email.replace(".", "_"));
+        intent.putExtra("emailKey", emailKey);
         startActivity(intent);
         finish();
     }
 
-    // ---*** THIS METHOD IS ALSO CHANGED ***---
     @Override
     public void onBackPressed() {
-        // Standard behavior: go to the previous page
-        finish();
+        goToDashboard();
     }
 }

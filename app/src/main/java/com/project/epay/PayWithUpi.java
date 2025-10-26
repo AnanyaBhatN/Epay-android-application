@@ -9,8 +9,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-// --- ADD THIS IMPORT ---
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.card.MaterialCardView;
@@ -28,10 +26,10 @@ public class PayWithUpi extends AppCompatActivity {
     private Button btnVerify, btnPay;
 
     private DatabaseReference contactsRef;
-    private final String fixedUserId = "user123"; // fixed user
+    private final String fixedUserId = "user123";
     private String verifiedUpiId;
+    private String receiverName;
 
-    // Email passed from DashboardActivity
     private String email;
     private String emailKey;
 
@@ -40,11 +38,9 @@ public class PayWithUpi extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.paywithupi);
 
-        // Get email/emailKey from DashboardActivity
         email = getIntent().getStringExtra("email");
         emailKey = getIntent().getStringExtra("emailKey");
 
-        // Initialize views
         cardUpiEntry = findViewById(R.id.card_upi_entry);
         cardAmountEntry = findViewById(R.id.card_amount_entry);
         etUpiId = findViewById(R.id.et_upi_id);
@@ -53,49 +49,18 @@ public class PayWithUpi extends AppCompatActivity {
         btnVerify = findViewById(R.id.btn_verify);
         btnPay = findViewById(R.id.btn_pay);
 
-        // Hide amount card initially
         cardAmountEntry.setVisibility(View.GONE);
-
-        // Firebase reference
         contactsRef = FirebaseDatabase.getInstance().getReference("contacts").child(fixedUserId);
 
-        // Verify UPI ID
         btnVerify.setOnClickListener(v -> verifyUpi());
-
-        // Proceed to PIN entry
         btnPay.setOnClickListener(v -> proceedToPin());
 
-        // ---*** THIS IS THE UPDATED SECTION ***---
-
-        // Back icon click listener
-        View backIcon = findViewById(R.id.back_icon); // <-- Correct ID
-        if (backIcon != null) {
-            backIcon.setOnClickListener(v -> {
-                // finish() closes this activity and goes to the previous one
-                finish();
-            });
-        }
-
-        // Home icon click listener
-        View homeIcon = findViewById(R.id.home_icon); // <-- Correct ID
-        if (homeIcon != null) {
-            homeIcon.setOnClickListener(v -> goToDashboard());
-        }
-
-        // This replaces the deprecated onBackPressed() method
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                // This will close the current activity and go back
-                finish();
-            }
-        });
-        // ---*** END OF UPDATED SECTION ***---
+        View homeIcon = findViewById(R.id.btn_home);
+        if (homeIcon != null) homeIcon.setOnClickListener(v -> goToDashboard());
     }
 
     private void verifyUpi() {
         String upiId = etUpiId.getText().toString().trim();
-
         if (!isValidUpiId(upiId)) {
             etUpiId.setError("Enter valid UPI ID (e.g., user@upi)");
             return;
@@ -111,17 +76,26 @@ public class PayWithUpi extends AppCompatActivity {
 
                 for (DataSnapshot contactSnap : snapshot.getChildren()) {
                     String contactUpi = contactSnap.child("upiId").getValue(String.class);
+                    receiverName = contactSnap.child("contactName").getValue(String.class); // fixed key
+
                     if (upiId.equals(contactUpi)) {
+                        if (receiverName == null || receiverName.trim().isEmpty()) {
+                            Toast.makeText(PayWithUpi.this,
+                                    "Contact name missing in Firebase", Toast.LENGTH_SHORT).show();
+                            btnVerify.setText("Verify");
+                            btnVerify.setEnabled(true);
+                            return;
+                        }
+
+                        verifiedUpiId = upiId;
+                        tvVerifiedUpiId.setText("Paying to: " + receiverName);
+                        cardAmountEntry.setVisibility(View.VISIBLE);
                         found = true;
                         break;
                     }
                 }
 
-                if (found) {
-                    verifiedUpiId = upiId;
-                    tvVerifiedUpiId.setText(verifiedUpiId);
-                    cardAmountEntry.setVisibility(View.VISIBLE);
-                } else {
+                if (!found) {
                     Toast.makeText(PayWithUpi.this, "UPI ID not found in contacts", Toast.LENGTH_SHORT).show();
                 }
 
@@ -139,15 +113,30 @@ public class PayWithUpi extends AppCompatActivity {
     }
 
     private void proceedToPin() {
-        String amount = etAmount.getText().toString().trim();
-        if (TextUtils.isEmpty(amount)) {
+        String amountStr = etAmount.getText().toString().trim();
+        if (TextUtils.isEmpty(amountStr)) {
             etAmount.setError("Enter amount");
+            return;
+        }
+
+        if (verifiedUpiId == null || receiverName == null) {
+            Toast.makeText(this, "Verify UPI ID first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int amountInt;
+        try {
+            amountInt = Integer.parseInt(amountStr);
+            if (amountInt <= 0) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            etAmount.setError("Enter valid amount");
             return;
         }
 
         Intent intent = new Intent(PayWithUpi.this, Pin_paywithupi.class);
         intent.putExtra("recipientUpi", verifiedUpiId);
-        intent.putExtra("amount", amount);
+        intent.putExtra("recipientName", receiverName);
+        intent.putExtra("amount", amountInt);
         intent.putExtra("email", email);
         intent.putExtra("emailKey", emailKey);
         startActivity(intent);
@@ -159,7 +148,6 @@ public class PayWithUpi extends AppCompatActivity {
         return upiId.matches(regex);
     }
 
-    // Navigate to DashboardActivity
     private void goToDashboard() {
         Intent dashboardIntent = new Intent(PayWithUpi.this, DashboardActivity.class);
         dashboardIntent.putExtra("email", email);
@@ -169,5 +157,8 @@ public class PayWithUpi extends AppCompatActivity {
         finish();
     }
 
-    // --- The old onBackPressed() method is no longer needed ---
+    @Override
+    public void onBackPressed() {
+        goToDashboard();
+    }
 }
