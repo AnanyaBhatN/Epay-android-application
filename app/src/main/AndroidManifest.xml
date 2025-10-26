@@ -55,5 +55,6 @@
         <activity android:name=".AddAmountActivity" android:exported="false"/>
         <activity android:name=".EnterPin" android:exported="true"/>
         <activity android:name=".AddSuccessActivity" android:exported="false"/>
+        <activity android:name=".TransactionHistory" android:exported="false"/>
     </application>
 </manifest>

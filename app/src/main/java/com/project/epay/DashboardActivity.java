@@ -140,5 +140,14 @@ public class DashboardActivity extends AppCompatActivity {
             intent.putExtra("emailKey", emailKey);
             startActivity(intent);
         });
+
+        // Transaction Button
+        findViewById(R.id.transactionHistoryButton).setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, TransactionHistory.class); // <-- your transaction page
+            intent.putExtra("email", email);
+            intent.putExtra("emailKey", emailKey);
+            startActivity(intent);
+        });
+
     }
 }
