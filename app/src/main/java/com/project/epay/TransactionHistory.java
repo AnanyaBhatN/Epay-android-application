@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,7 +36,11 @@ public class TransactionHistory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_history);
+        ivBack = findViewById(R.id.ivBack);
+        ImageView btnHome = findViewById(R.id.btn_home); // make sure btn_home ID matches your XML
 
+        ivBack.setOnClickListener(v -> navigateToDashboard());
+        btnHome.setOnClickListener(v -> navigateToDashboard());
         recyclerView = findViewById(R.id.rvTransactions);
         ivBack = findViewById(R.id.ivBack);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -57,11 +61,17 @@ public class TransactionHistory extends AppCompatActivity {
         emailKey = emailKey.replace(".", "_");
 
         // Start fetching data
-        fetchRechargeTransactions(emailKey);
+        fetchRecharges(emailKey);
     }
-
+    private void navigateToDashboard() {
+        Intent intent = new Intent(TransactionHistory.this, DashboardActivity.class);
+        intent.putExtra("emailKey", emailKey); // pass user email
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
+    }
     /** 🔹 Step 1: Fetch Recharges */
-    private void fetchRechargeTransactions(String emailKey) {
+    private void fetchRecharges(String emailKey) {
         DatabaseReference rechargeRef = FirebaseDatabase.getInstance()
                 .getReference("Recharges")
                 .child(emailKey);
@@ -69,6 +79,7 @@ public class TransactionHistory extends AppCompatActivity {
         rechargeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("TXN_DEBUG", "Recharges snapshot exists? " + snapshot.exists());
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     try {
                         if (!ds.child("operator").exists()) continue;
@@ -80,21 +91,8 @@ public class TransactionHistory extends AppCompatActivity {
                         String dateTime = ds.child("dateTime").getValue(String.class);
                         String status = ds.child("status").getValue(String.class);
 
-                        Log.d("TXN_RECHARGE", "id=" + id +
-                                ", amount=" + amountStr +
-                                ", mobile=" + mobileNumber +
-                                ", operator=" + operator +
-                                ", dateTime=" + dateTime +
-                                ", status=" + status
-                        );
-
-                        if (id == null || amountStr == null || dateTime == null) {
-                            Log.e("TXN_SKIP", "Skipping invalid recharge: " + id);
-                            continue;
-                        }
-
-                        int amount;
-                        try { amount = Integer.parseInt(amountStr); } catch (Exception e) { amount = 0; }
+                        int amount = 0;
+                        try { amount = Integer.parseInt(amountStr); } catch (Exception ignored) {}
 
                         Transaction txn = new Transaction(
                                 id,
@@ -107,25 +105,23 @@ public class TransactionHistory extends AppCompatActivity {
                         );
 
                         transactionList.add(txn);
-
+                        Log.d("TXN_DEBUG", "Added Recharge: " + txn.getCounterpart() + ", " + txn.getAmount());
                     } catch (Exception e) {
                         Log.e("TXN_ERROR", "Error parsing recharge", e);
                     }
                 }
-
-                fetchSendMoneyTransactions(emailKey);
+                fetchSendMoney(emailKey);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("TXN_ERROR", "Failed to fetch recharges: " + error.getMessage());
-                Toast.makeText(TransactionHistory.this, "Failed to load recharges", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     /** 🔹 Step 2: Fetch SendMoney */
-    private void fetchSendMoneyTransactions(String emailKey) {
+    private void fetchSendMoney(String emailKey) {
         DatabaseReference sendMoneyRef = FirebaseDatabase.getInstance()
                 .getReference("SendMoney")
                 .child(emailKey);
@@ -133,30 +129,16 @@ public class TransactionHistory extends AppCompatActivity {
         sendMoneyRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("TXN_DEBUG", "SendMoney snapshot exists? " + snapshot.exists());
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     try {
                         String id = ds.getKey();
-                        String amountStr = ds.child("amount").getValue(String.class);
+                        Object amtObj = ds.child("amount").getValue();
+                        int amount = getAmount(amtObj);
                         String toName = ds.child("toName").getValue(String.class);
                         String toPhone = ds.child("toPhone").getValue(String.class);
                         String dateTime = ds.child("dateTime").getValue(String.class);
                         String typeStr = ds.child("type").getValue(String.class);
-
-                        Log.d("TXN_SEND", "id=" + id +
-                                ", amount=" + amountStr +
-                                ", toName=" + toName +
-                                ", toPhone=" + toPhone +
-                                ", dateTime=" + dateTime +
-                                ", type=" + typeStr
-                        );
-
-                        if (id == null || amountStr == null || dateTime == null) {
-                            Log.e("TXN_SKIP", "Skipping invalid SendMoney: " + id);
-                            continue;
-                        }
-
-                        int amount;
-                        try { amount = Integer.parseInt(amountStr); } catch (Exception e) { amount = 0; }
 
                         Transaction txn = new Transaction(
                                 id,
@@ -169,25 +151,23 @@ public class TransactionHistory extends AppCompatActivity {
                         );
 
                         transactionList.add(txn);
-
+                        Log.d("TXN_DEBUG", "Added SendMoney: " + txn.getCounterpart() + ", " + txn.getAmount());
                     } catch (Exception e) {
                         Log.e("TXN_ERROR", "Error parsing SendMoney", e);
                     }
                 }
-
-                fetchTransactionsModule(emailKey);
+                fetchTransactions(emailKey);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("TXN_ERROR", "Failed to fetch SendMoney: " + error.getMessage());
-                Toast.makeText(TransactionHistory.this, "Failed to load sent money", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    /** 🔹 Step 3: Fetch transactions table */
-    private void fetchTransactionsModule(String emailKey) {
+    /** 🔹 Step 3: Fetch transactions */
+    private void fetchTransactions(String emailKey) {
         DatabaseReference txnRef = FirebaseDatabase.getInstance()
                 .getReference("transactions")
                 .child(emailKey);
@@ -195,60 +175,50 @@ public class TransactionHistory extends AppCompatActivity {
         txnRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("TXN_DEBUG", "Transactions snapshot exists? " + snapshot.exists());
+                Log.d("TXN_DEBUG", "Children count: " + snapshot.getChildrenCount());
+
+                if (!snapshot.exists()) return;
+
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     try {
                         String id = ds.getKey();
-                        String typeStr = ds.child("type").getValue(String.class);
-                        String amountStr = ds.child("amount").getValue(String.class);
+                        String type = ds.child("type").getValue(String.class);
+                        Object amtObj = ds.child("amount").getValue();
+                        int amount = getAmount(amtObj);
+
                         String dateTime = ds.child("dateTime").getValue(String.class);
                         String status = ds.child("status").getValue(String.class);
                         String recipientName = ds.child("recipientName").getValue(String.class);
                         String recipientUpi = ds.child("recipientUpi").getValue(String.class);
+                        String senderName = ds.child("senderName").getValue(String.class);
+                        String senderUpi = ds.child("senderUpi").getValue(String.class);
 
-                        Log.d("TXN_FETCH", "id=" + id +
-                                ", type=" + typeStr +
-                                ", amount=" + amountStr +
-                                ", dateTime=" + dateTime +
-                                ", status=" + status +
-                                ", recipientName=" + recipientName +
-                                ", recipientUpi=" + recipientUpi
-                        );
-
-                        if (id == null || amountStr == null || dateTime == null) {
-                            Log.e("TXN_SKIP", "Skipping invalid transaction: " + id);
-                            continue;
-                        }
-
-                        int amount;
-                        try { amount = Integer.parseInt(amountStr); } catch (Exception e) { amount = 0; }
-
-                        Transaction.Type type;
                         String counterpart;
-
-                        if ("Sent".equalsIgnoreCase(typeStr)) {
-                            type = Transaction.Type.PAID;
+                        Transaction.Type txnType;
+                        if ("Sent".equalsIgnoreCase(type)) {
+                            txnType = Transaction.Type.PAID;
                             counterpart = firstNonEmpty(recipientName, recipientUpi, "Unknown");
-                        } else if ("Received".equalsIgnoreCase(typeStr)) {
-                            type = Transaction.Type.RECEIVED;
-                            // Use your own emailKey as sender if senderName not available
-                            counterpart = firstNonEmpty(ds.child("senderName").getValue(String.class),
-                                    ds.child("senderUpi").getValue(String.class),
-                                    "Unknown");
+                        } else if ("Received".equalsIgnoreCase(type)) {
+                            txnType = Transaction.Type.RECEIVED;
+                            counterpart = firstNonEmpty(senderName, senderUpi, "Unknown");
                         } else {
-                            type = Transaction.Type.OTHER;
+                            txnType = Transaction.Type.OTHER;
                             counterpart = "Unknown";
                         }
 
-                        transactionList.add(new Transaction(
+                        Transaction txn = new Transaction(
                                 id,
-                                type,
+                                txnType,
                                 counterpart,
                                 amount,
                                 dateTime,
                                 status != null ? status : "Success",
                                 "UPI Payment"
-                        ));
+                        );
 
+                        transactionList.add(txn);
+                        Log.d("TXN_DEBUG", "Added Transaction: " + txn.getCounterpart() + ", " + txn.getAmount());
                     } catch (Exception e) {
                         Log.e("TXN_ERROR", "Error parsing transaction", e);
                     }
@@ -259,13 +229,12 @@ public class TransactionHistory extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("TXN_ERROR", "Firebase fetch cancelled: " + error.getMessage());
-                Toast.makeText(TransactionHistory.this, "Failed to load transactions", Toast.LENGTH_SHORT).show();
+                Log.e("TXN_ERROR", "Error fetching transactions: " + error.getMessage());
             }
         });
     }
 
-    /** 🔹 Step 4: Sort transactions by latest first */
+    /** 🔹 Step 4: Sort transactions */
     private void sortTransactions() {
         Collections.sort(transactionList, new Comparator<Transaction>() {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -290,11 +259,22 @@ public class TransactionHistory extends AppCompatActivity {
         }
     }
 
-    /** ✅ Helper: first non-empty string */
+    /** Helper: first non-empty string */
     private String firstNonEmpty(String... values) {
         for (String v : values) {
             if (v != null && !v.trim().isEmpty()) return v;
         }
         return "Unknown";
+    }
+
+    /** Helper: convert Firebase amount to int */
+    private int getAmount(Object amtObj) {
+        int amount = 0;
+        if (amtObj instanceof Long) amount = ((Long) amtObj).intValue();
+        else if (amtObj instanceof Double) amount = ((Double) amtObj).intValue();
+        else if (amtObj instanceof String) {
+            try { amount = Integer.parseInt((String) amtObj); } catch (Exception ignored) {}
+        }
+        return amount;
     }
 }

@@ -1,50 +1,47 @@
 package com.project.epay;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class Transaction {
 
-    public enum Type { RECHARGE, SENDMONEY, RECEIVED, PAID, OTHER }
+    public enum Type { RECHARGE, SENDMONEY, PAID, RECEIVED, OTHER }
 
     private String id;
     private Type type;
     private String counterpart;
     private int amount;
-    private String dateTime; // full "yyyy-MM-dd HH:mm:ss"
+    private String dateTime;  // single field now
     private String status;
     private String method;
-    private boolean expanded;
+    private boolean isExpanded = false;
 
-    public Transaction(String id, Type type, String counterpart, int amount, String dateTime, String status, String method) {
+    public Transaction(String id, Type type, String counterpart, int amount,
+                       String dateTime, String status, String method) {
         this.id = id;
         this.type = type;
         this.counterpart = counterpart;
         this.amount = amount;
-        this.dateTime = dateTime != null ? dateTime : "";
-        this.status = status != null ? status : "Success";
-        this.method = method != null ? method : "";
-        this.expanded = false;
+        this.dateTime = dateTime;
+        this.status = status;
+        this.method = method;
     }
 
     public String getId() { return id; }
     public Type getType() { return type; }
     public String getCounterpart() { return counterpart; }
     public int getAmount() { return amount; }
+    public String getDateTime() { return dateTime; }
     public String getStatus() { return status; }
     public String getMethod() { return method; }
-    public boolean isExpanded() { return expanded; }
-    public void setExpanded(boolean expanded) { this.expanded = expanded; }
-    public String getDateTime() { return dateTime; }
+    public boolean isExpanded() { return isExpanded; }
+    public void setExpanded(boolean expanded) { isExpanded = expanded; }
 
-    // ✅ Convert dateTime string to Date object safely
-    public Date getDateTimeObject() {
-        if (dateTime.isEmpty()) return null;
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
-        } catch (ParseException e) {
-            return null;
-        }
+    // ✅ helper to get only date or time for display
+    public String getDate() {
+        if (dateTime == null || !dateTime.contains(" ")) return dateTime;
+        return dateTime.split(" ")[0];
+    }
+
+    public String getTime() {
+        if (dateTime == null || !dateTime.contains(" ")) return "";
+        return dateTime.split(" ")[1];
     }
 }

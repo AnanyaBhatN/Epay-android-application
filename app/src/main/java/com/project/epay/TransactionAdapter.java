@@ -35,16 +35,19 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Transaction transaction = transactionList.get(position);
 
+        // Display title, date, and amount
         holder.tvTitle.setText(getTitle(transaction));
-        holder.tvDate.setText(transaction.getDateTime());
+        holder.tvDate.setText(transaction.getDate());       // only date
         holder.tvAmount.setText("₹" + transaction.getAmount());
 
+        // Set amount color
         if (transaction.getType() == Transaction.Type.RECEIVED) {
             holder.tvAmount.setTextColor(Color.parseColor("#388E3C")); // green
         } else {
             holder.tvAmount.setTextColor(Color.parseColor("#D32F2F")); // red
         }
 
+        // Details section
         holder.tvDetailId.setText("Transaction ID: " + transaction.getId());
         holder.tvDetailType.setText("Type: " + transaction.getType());
         holder.tvDetailFromTo.setText("Counterpart: " + transaction.getCounterpart());
@@ -53,6 +56,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         holder.tvDetailStatus.setText("Status: " + transaction.getStatus());
         holder.tvDetailMethod.setText("Method: " + transaction.getMethod());
 
+        // Expand/collapse logic
         holder.expandArea.setVisibility(transaction.isExpanded() ? View.VISIBLE : View.GONE);
         holder.ivChevron.setRotation(transaction.isExpanded() ? 180 : 0);
 
