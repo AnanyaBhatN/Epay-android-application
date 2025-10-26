@@ -37,12 +37,11 @@ public class TransactionHistory extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_history);
         ivBack = findViewById(R.id.ivBack);
-        ImageView btnHome = findViewById(R.id.btn_home); // make sure btn_home ID matches your XML
+        ImageView btnHome = findViewById(R.id.btn_home);
 
         ivBack.setOnClickListener(v -> navigateToDashboard());
         btnHome.setOnClickListener(v -> navigateToDashboard());
         recyclerView = findViewById(R.id.rvTransactions);
-        ivBack = findViewById(R.id.ivBack);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         transactionList = new ArrayList<>();
@@ -63,13 +62,15 @@ public class TransactionHistory extends AppCompatActivity {
         // Start fetching data
         fetchRecharges(emailKey);
     }
+
     private void navigateToDashboard() {
         Intent intent = new Intent(TransactionHistory.this, DashboardActivity.class);
-        intent.putExtra("emailKey", emailKey); // pass user email
+        intent.putExtra("emailKey", emailKey);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }
+
     /** 🔹 Step 1: Fetch Recharges */
     private void fetchRecharges(String emailKey) {
         DatabaseReference rechargeRef = FirebaseDatabase.getInstance()
@@ -79,7 +80,6 @@ public class TransactionHistory extends AppCompatActivity {
         rechargeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d("TXN_DEBUG", "Recharges snapshot exists? " + snapshot.exists());
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     try {
                         if (!ds.child("operator").exists()) continue;
@@ -105,7 +105,6 @@ public class TransactionHistory extends AppCompatActivity {
                         );
 
                         transactionList.add(txn);
-                        Log.d("TXN_DEBUG", "Added Recharge: " + txn.getCounterpart() + ", " + txn.getAmount());
                     } catch (Exception e) {
                         Log.e("TXN_ERROR", "Error parsing recharge", e);
                     }
@@ -123,39 +122,57 @@ public class TransactionHistory extends AppCompatActivity {
     /** 🔹 Step 2: Fetch SendMoney */
     private void fetchSendMoney(String emailKey) {
         DatabaseReference sendMoneyRef = FirebaseDatabase.getInstance()
-                .getReference("SendMoney")
-                .child(emailKey);
+                .getReference("SendMoney");
 
         sendMoneyRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d("TXN_DEBUG", "SendMoney snapshot exists? " + snapshot.exists());
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    try {
-                        String id = ds.getKey();
-                        Object amtObj = ds.child("amount").getValue();
-                        int amount = getAmount(amtObj);
-                        String toName = ds.child("toName").getValue(String.class);
-                        String toPhone = ds.child("toPhone").getValue(String.class);
-                        String dateTime = ds.child("dateTime").getValue(String.class);
-                        String typeStr = ds.child("type").getValue(String.class);
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    String userEmailKey = userSnapshot.getKey();
+                    for (DataSnapshot ds : userSnapshot.getChildren()) {
+                        try {
+                            String id = ds.getKey();
+                            Object amtObj = ds.child("amount").getValue();
+                            int amount = getAmount(amtObj);
+                            String fromEmail = ds.child("fromEmail").getValue(String.class);
+                            String toEmail = ds.child("toEmail").getValue(String.class);
+                            String toName = ds.child("toName").getValue(String.class);
+                            String dateTime = ds.child("dateTime").getValue(String.class);
+                            String typeStr = ds.child("type").getValue(String.class);
 
-                        Transaction txn = new Transaction(
-                                id,
-                                Transaction.Type.SENDMONEY,
-                                firstNonEmpty(toName, toPhone, "Unknown"),
-                                amount,
-                                dateTime,
-                                "Success",
-                                typeStr != null ? typeStr : "UPI Payment"
-                        );
+                            Transaction.Type txnType;
+                            String counterpart;
 
-                        transactionList.add(txn);
-                        Log.d("TXN_DEBUG", "Added SendMoney: " + txn.getCounterpart() + ", " + txn.getAmount());
-                    } catch (Exception e) {
-                        Log.e("TXN_ERROR", "Error parsing SendMoney", e);
+                            if (emailKey.equalsIgnoreCase(userEmailKey)) {
+                                // ✅ TEMP FIX: show as "Received from" instead of "Sent to"
+                                txnType = Transaction.Type.RECEIVED; // makes it green
+                                counterpart = "Received from " + firstNonEmpty(toName, toEmail, "Unknown");
+                                // TODO: revert later to: txnType = Transaction.Type.PAID; and "Sent to ..."
+                            } else if (toEmail != null && toEmail.equalsIgnoreCase(emailKey)) {
+                                txnType = Transaction.Type.RECEIVED;
+                                counterpart = "Received from " + firstNonEmpty(fromEmail, "Unknown");
+                            } else {
+                                continue;
+                            }
+
+                            Transaction txn = new Transaction(
+                                    id,
+                                    txnType,
+                                    counterpart,
+                                    amount,
+                                    dateTime,
+                                    "Success",
+                                    typeStr != null ? typeStr : "UPI Payment"
+                            );
+
+                            transactionList.add(txn);
+
+                        } catch (Exception e) {
+                            Log.e("TXN_ERROR", "Error parsing SendMoney", e);
+                        }
                     }
                 }
+
                 fetchTransactions(emailKey);
             }
 
@@ -175,9 +192,6 @@ public class TransactionHistory extends AppCompatActivity {
         txnRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d("TXN_DEBUG", "Transactions snapshot exists? " + snapshot.exists());
-                Log.d("TXN_DEBUG", "Children count: " + snapshot.getChildrenCount());
-
                 if (!snapshot.exists()) return;
 
                 for (DataSnapshot ds : snapshot.getChildren()) {
@@ -218,7 +232,6 @@ public class TransactionHistory extends AppCompatActivity {
                         );
 
                         transactionList.add(txn);
-                        Log.d("TXN_DEBUG", "Added Transaction: " + txn.getCounterpart() + ", " + txn.getAmount());
                     } catch (Exception e) {
                         Log.e("TXN_ERROR", "Error parsing transaction", e);
                     }
@@ -246,7 +259,6 @@ public class TransactionHistory extends AppCompatActivity {
                     Date d2 = sdf.parse(t2.getDateTime());
                     return d2.compareTo(d1); // latest first
                 } catch (ParseException e) {
-                    Log.e("TXN_ERROR", "Date parse error", e);
                     return 0;
                 }
             }

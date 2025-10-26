@@ -35,28 +35,57 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Transaction transaction = transactionList.get(position);
 
-        // Display title, date, and amount
-        holder.tvTitle.setText(getTitle(transaction));
-        holder.tvDate.setText(transaction.getDate());       // only date
-        holder.tvAmount.setText("₹" + transaction.getAmount());
+        String titleText;
 
-        // Set amount color
-        if (transaction.getType() == Transaction.Type.RECEIVED) {
-            holder.tvAmount.setTextColor(Color.parseColor("#388E3C")); // green
-        } else {
-            holder.tvAmount.setTextColor(Color.parseColor("#D32F2F")); // red
+        switch (transaction.getType()) {
+            case RECHARGE:
+                titleText = "Recharge to " + transaction.getCounterpart();
+                break;
+
+            case PAID:
+            case SENDMONEY:
+                // For SendMoney, text is already "Sent to ..." or "Received from ..."
+                if (transaction.getCounterpart().startsWith("Received from") ||
+                        transaction.getCounterpart().startsWith("Sent to")) {
+                    titleText = transaction.getCounterpart();
+                } else {
+                    titleText = "Sent to " + transaction.getCounterpart();
+                }
+                break;
+
+            case RECEIVED:
+                if (transaction.getCounterpart().startsWith("Received from")) {
+                    titleText = transaction.getCounterpart();
+                } else {
+                    titleText = "Received from " + transaction.getCounterpart();
+                }
+                break;
+
+            default:
+                titleText = "Transaction";
+                break;
         }
 
-        // Details section
+        holder.tvTitle.setText(titleText);
+        holder.tvDate.setText(transaction.getDateTime());
+        holder.tvAmount.setText("₹" + transaction.getAmount());
+
+        // ✅ Color: green for received, red for sent/recharge
+        if (transaction.getType() == Transaction.Type.RECEIVED) {
+            holder.tvAmount.setTextColor(Color.parseColor("#388E3C"));
+        } else {
+            holder.tvAmount.setTextColor(Color.parseColor("#D32F2F"));
+        }
+
+        // Expandable details
         holder.tvDetailId.setText("Transaction ID: " + transaction.getId());
         holder.tvDetailType.setText("Type: " + transaction.getType());
-        holder.tvDetailFromTo.setText("Counterpart: " + transaction.getCounterpart());
+        holder.tvDetailFromTo.setText(titleText);
         holder.tvDetailAmount.setText("Amount: ₹" + transaction.getAmount());
         holder.tvDetailDateTime.setText("Date & Time: " + transaction.getDateTime());
         holder.tvDetailStatus.setText("Status: " + transaction.getStatus());
         holder.tvDetailMethod.setText("Method: " + transaction.getMethod());
 
-        // Expand/collapse logic
         holder.expandArea.setVisibility(transaction.isExpanded() ? View.VISIBLE : View.GONE);
         holder.ivChevron.setRotation(transaction.isExpanded() ? 180 : 0);
 
@@ -64,20 +93,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             transaction.setExpanded(!transaction.isExpanded());
             notifyItemChanged(position);
         });
-    }
-
-    private String getTitle(Transaction transaction) {
-        switch (transaction.getType()) {
-            case RECHARGE:
-                return "Recharge to " + transaction.getCounterpart();
-            case SENDMONEY:
-            case PAID:
-                return "Sent to " + transaction.getCounterpart();
-            case RECEIVED:
-                return "Received from " + transaction.getCounterpart();
-            default:
-                return "Transaction";
-        }
     }
 
     @Override
