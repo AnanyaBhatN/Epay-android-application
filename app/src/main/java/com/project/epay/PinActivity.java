@@ -8,6 +8,8 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+// --- ADD THIS IMPORT ---
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DatabaseReference;
@@ -88,18 +90,35 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         findViewById(R.id.btn_enter).setOnClickListener(this);
         findViewById(R.id.btn_cancel).setOnClickListener(this);
         findViewById(R.id.btn_clear).setOnClickListener(this);
+
+        // --- ADD THIS FOR THE PHYSICAL BACK BUTTON ---
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // This closes the activity and returns to the previous page
+                finish();
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
 
-        if (id == R.id.btn_back || id == R.id.btn_home) {
+        // ---*** THIS IS THE UPDATED LOGIC ***---
+        if (id == R.id.btn_back) {
+            // This closes the PIN page and goes back to the Contacts page
+            finish();
+
+        } else if (id == R.id.btn_home) {
+            // This goes all the way back to the Dashboard
             Intent homeIntent = new Intent(PinActivity.this, DashboardActivity.class);
             homeIntent.putExtra("email", email);
             homeIntent.putExtra("emailKey", emailKey);
+            homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(homeIntent);
             finish();
+            // ---*** END OF UPDATED LOGIC ***---
 
         } else if (id == R.id.btn_clear) {
             if (pinIndex > 0) {
@@ -233,6 +252,4 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
             }
         });
     }
-
-
 }

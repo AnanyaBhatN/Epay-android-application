@@ -19,10 +19,20 @@ public class BankSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bank_selection);
 
         ImageView imgBack = findViewById(R.id.imgBack);
-        ImageView imgClose = findViewById(R.id.imgClose);
+        ImageView imgClose = findViewById(R.id.imgClose); // This is your Home icon
 
-        imgBack.setOnClickListener(v -> finish());
-        imgClose.setOnClickListener(v -> finishAffinity());
+        imgBack.setOnClickListener(v -> finish()); // Goes back to Dashboard
+
+        // ---*** THIS IS THE CHANGED BLOCK ***---
+        imgClose.setOnClickListener(v -> {
+            // Go to Dashboard
+            Intent intent = new Intent(BankSelectionActivity.this, DashboardActivity.class);
+            // Clear the activities on top
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish(); // Close this activity
+        });
+        // ---*** END OF CHANGE ***---
 
         tvSelected = findViewById(R.id.tvSelected);
 

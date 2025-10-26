@@ -5,15 +5,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.ImageView;
+import android.widget.ImageView; // <-- **1. ADD THIS IMPORT**
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback; // <-- **2. ADD THIS IMPORT**
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.google.firebase.database.DataSnapshot; // <-- Already present, but make sure
+import com.google.firebase.database.DatabaseError; // <-- Already present, but make sure
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener; // <-- Already present, but make sure
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -72,7 +76,7 @@ public class Pinactivity_recharge extends AppCompatActivity {
                 cleanAmount);
         tvTransactionDetails.setText(detailsText);
 
-        // Keypad button setup
+        // Keypad button setup (unchanged)
         GridLayout keypadGrid = findViewById(R.id.keypad_grid);
         for (int i = 0; i < keypadGrid.getChildCount(); i++) {
             View child = keypadGrid.getChildAt(i);
@@ -89,15 +93,26 @@ public class Pinactivity_recharge extends AppCompatActivity {
             }
         }
 
-        // Enter button
+        // Enter button (unchanged)
         Button btnEnter = findViewById(R.id.btn_enter);
         btnEnter.setOnClickListener(v -> {
             if (pinBuilder.length() == 4) {
-                verifyPin(sanitizedEmailKey); // ✅ Verify PIN before saving recharge
+                verifyPin(sanitizedEmailKey);
             } else {
                 Toast.makeText(this, "Enter 4-digit PIN", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // --- **3. ADD THIS BLOCK FOR THE BACK ARROW** ---
+        // (Make sure the ID in your XML is "btn_back")
+        ImageView btnBack = findViewById(R.id.btn_back);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                // finish() closes this page and goes to the previous one
+                finish();
+            });
+        }
+        // --- **END OF NEW BLOCK** ---
 
         // Home button → DashboardActivity
         ImageView btnHome = findViewById(R.id.btn_home);
@@ -106,10 +121,22 @@ public class Pinactivity_recharge extends AppCompatActivity {
                 Intent homeIntent = new Intent(Pinactivity_recharge.this, DashboardActivity.class);
                 homeIntent.putExtra("email", email);
                 homeIntent.putExtra("emailKey", sanitizedEmailKey);
+                // --- **4. ADD FLAGS TO PREVENT DUPLICATES** ---
+                homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(homeIntent);
                 finish();
             });
         }
+
+        // --- **5. ADD THIS FOR THE PHYSICAL BACK BUTTON** ---
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // This closes the activity and returns to the previous page
+                finish();
+            }
+        });
+        // --- **END OF NEW BLOCK** ---
     }
 
     private void appendPin(String digit) {
@@ -138,7 +165,7 @@ public class Pinactivity_recharge extends AppCompatActivity {
         updateDots();
     }
 
-    // ✅ Verify PIN before transaction
+    // Verify PIN before transaction (unchanged)
     private void verifyPin(String sanitizedEmailKey) {
         String enteredPin = pinBuilder.toString();
 
@@ -152,7 +179,7 @@ public class Pinactivity_recharge extends AppCompatActivity {
                 String storedPin = task.getResult().getValue(String.class);
 
                 if (storedPin != null && storedPin.equals(enteredPin)) {
-                    deductFromWallet(sanitizedEmailKey); // ✅ Deduct money before saving recharge
+                    deductFromWallet(sanitizedEmailKey);
                 } else {
                     Toast.makeText(Pinactivity_recharge.this, "Invalid PIN. Please try again.", Toast.LENGTH_SHORT).show();
                     resetPin();
@@ -163,7 +190,7 @@ public class Pinactivity_recharge extends AppCompatActivity {
         });
     }
 
-    // ✅ Deduct amount from wallet
+    // Deduct amount from wallet (unchanged)
     private void deductFromWallet(String sanitizedEmailKey) {
         DatabaseReference walletRef = FirebaseDatabase.getInstance()
                 .getReference("wallet")
@@ -180,7 +207,7 @@ public class Pinactivity_recharge extends AppCompatActivity {
 
                         walletRef.setValue(newBalance).addOnCompleteListener(updateTask -> {
                             if (updateTask.isSuccessful()) {
-                                saveRechargeToFirebase(sanitizedEmailKey); // ✅ Save recharge only after deduction
+                                saveRechargeToFirebase(sanitizedEmailKey);
                             } else {
                                 Toast.makeText(Pinactivity_recharge.this, "Failed to update wallet balance.", Toast.LENGTH_SHORT).show();
                                 rechargeSaved = false;
@@ -202,7 +229,7 @@ public class Pinactivity_recharge extends AppCompatActivity {
         });
     }
 
-    // ✅ Save recharge record in Firebase
+    // Save recharge record in Firebase (unchanged)
     private void saveRechargeToFirebase(String sanitizedEmailKey) {
         if (rechargeSaved) return;
         rechargeSaved = true;

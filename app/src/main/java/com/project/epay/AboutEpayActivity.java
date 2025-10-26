@@ -1,5 +1,6 @@
 package com.project.epay;
 
+import android.content.Intent; // <-- **1. ADD THIS IMPORT**
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,12 +34,16 @@ public class AboutEpayActivity extends AppCompatActivity {
         // Back button click listener
         backArrow.setOnClickListener(v -> finish()); // Return to previous activity
 
-        // Home icon click listener (placeholder)
-        homeIcon.setOnClickListener(v ->
-                        Toast.makeText(AboutEpayActivity.this, "Navigating to Home...", Toast.LENGTH_SHORT).show()
-                // Example if you have MainActivity:
-                // Intent intent = new Intent(AboutEpayActivity.this, MainActivity.class);
-                // startActivity(intent);
-        );
+        // ---*** THIS IS THE UPDATED SECTION ***---
+        // Home icon click listener
+        homeIcon.setOnClickListener(v -> {
+            // Create an Intent to go to DashboardActivity
+            Intent intent = new Intent(AboutEpayActivity.this, DashboardActivity.class);
+            // Add flags to prevent creating a new Dashboard on top of the old one
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish(); // Close this activity
+        });
+        // ---*** END OF UPDATE ***---
     }
 }

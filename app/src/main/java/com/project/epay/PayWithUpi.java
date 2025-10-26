@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+// --- ADD THIS IMPORT ---
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.card.MaterialCardView;
@@ -63,11 +65,32 @@ public class PayWithUpi extends AppCompatActivity {
         // Proceed to PIN entry
         btnPay.setOnClickListener(v -> proceedToPin());
 
-        // Home icon click (if you have an ImageView with id btn_home)
-        View homeIcon = findViewById(R.id.btn_home);
+        // ---*** THIS IS THE UPDATED SECTION ***---
+
+        // Back icon click listener
+        View backIcon = findViewById(R.id.back_icon); // <-- Correct ID
+        if (backIcon != null) {
+            backIcon.setOnClickListener(v -> {
+                // finish() closes this activity and goes to the previous one
+                finish();
+            });
+        }
+
+        // Home icon click listener
+        View homeIcon = findViewById(R.id.home_icon); // <-- Correct ID
         if (homeIcon != null) {
             homeIcon.setOnClickListener(v -> goToDashboard());
         }
+
+        // This replaces the deprecated onBackPressed() method
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // This will close the current activity and go back
+                finish();
+            }
+        });
+        // ---*** END OF UPDATED SECTION ***---
     }
 
     private void verifyUpi() {
@@ -146,8 +169,5 @@ public class PayWithUpi extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public void onBackPressed() {
-        goToDashboard();
-    }
+    // --- The old onBackPressed() method is no longer needed ---
 }

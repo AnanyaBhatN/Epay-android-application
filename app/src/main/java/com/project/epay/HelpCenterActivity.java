@@ -1,5 +1,6 @@
 package com.project.epay;
 
+import android.content.Intent; // <-- **1. ADD THIS IMPORT**
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -32,10 +33,16 @@ public class HelpCenterActivity extends AppCompatActivity {
         // Back button
         btnBackHelp.setOnClickListener(v -> finish());
 
+        // ---*** THIS IS THE UPDATED SECTION ***---
         // Home button
-        ivHomeHelp.setOnClickListener(v ->
-                Toast.makeText(HelpCenterActivity.this, "Home clicked", Toast.LENGTH_SHORT).show()
-        );
+        ivHomeHelp.setOnClickListener(v -> {
+            Intent intent = new Intent(HelpCenterActivity.this, DashboardActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish(); // Close this activity
+        });
+        // ---*** END OF UPDATE ***---
+
 
         // Card clicks
         card1.setOnClickListener(v ->

@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView; // <-- **1. ADD THIS IMPORT**
 import android.widget.LinearLayout;
 
+import androidx.activity.OnBackPressedCallback; // <-- **2. ADD THIS IMPORT**
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Recharge extends AppCompatActivity {
@@ -62,25 +64,22 @@ public class Recharge extends AppCompatActivity {
         findViewById(R.id.btnProceedToPlan).setOnClickListener(v -> {
             String mobile = editTextMobile.getText().toString().trim();
 
-            // Validation
+            // Validation (unchanged)
             if (mobile.isEmpty()) {
                 editTextMobile.setError("Enter mobile number");
                 editTextMobile.requestFocus();
                 return;
             }
-
             if (!mobile.matches("\\d+")) {
                 editTextMobile.setError("Mobile number should contain only digits");
                 editTextMobile.requestFocus();
                 return;
             }
-
             if (mobile.length() != 10) {
                 editTextMobile.setError("Enter a 10-digit mobile number");
                 editTextMobile.requestFocus();
                 return;
             }
-
             char firstDigit = mobile.charAt(0);
             if (firstDigit != '9' && firstDigit != '8' && firstDigit != '7' && firstDigit != '6') {
                 editTextMobile.setError("Mobile number should start with 9, 8, 7, or 6");
@@ -99,13 +98,34 @@ public class Recharge extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Home button → DashboardActivity
+        // --- **3. ADD THIS BLOCK FOR THE BACK ARROW** ---
+        // (Make sure the ID R.id.btnBack matches your recharge.xml file)
+        ImageView btnBack = findViewById(R.id.btnBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                // finish() closes this page and goes back to the Dashboard
+                finish();
+            });
+        }
+
+        // --- **4. UPDATED HOME BUTTON LISTENER** ---
         findViewById(R.id.btn_home).setOnClickListener(v -> {
             Intent homeIntent = new Intent(Recharge.this, DashboardActivity.class);
             homeIntent.putExtra("email", email);       // pass actual email
             homeIntent.putExtra("emailKey", emailKey); // pass sanitized key
+            // Add flags to prevent duplicate Dashboards
+            homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(homeIntent);
             finish();
+        });
+
+        // --- **5. ADD THIS FOR THE PHYSICAL BACK BUTTON** ---
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Closes this page and goes back to Dashboard
+                finish();
+            }
         });
     }
 }

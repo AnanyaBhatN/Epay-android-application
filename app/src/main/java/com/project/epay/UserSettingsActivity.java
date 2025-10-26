@@ -8,6 +8,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+// --- ADD THIS IMPORT ---
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
@@ -88,14 +90,29 @@ public class UserSettingsActivity extends AppCompatActivity {
 
         // Toolbar actions
         titleText.setText("User Settings");
-        backArrow.setOnClickListener(v -> finish());
 
+        // --- Back Arrow ---
+        backArrow.setOnClickListener(v -> finish()); // Correct: goes to previous page (Dashboard)
+
+        // --- Home Icon ---
         homeIcon.setOnClickListener(v -> {
             Intent intent = new Intent(UserSettingsActivity.this, DashboardActivity.class);
             intent.putExtra("emailKey", emailKey);
+            // --- ADDED THIS LINE for better navigation ---
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();
         });
+
+        // --- Physical Back Button ---
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // This closes the activity and returns to the Dashboard
+                finish();
+            }
+        });
+
 
         // About Epay
         aboutEpayLayout.setOnClickListener(v -> {

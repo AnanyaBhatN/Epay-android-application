@@ -23,28 +23,32 @@ public class OffersActivity extends AppCompatActivity {
     private List<Offer> allOffersList;
     private List<Offer> filteredOffersList;
     private ImageView ivBack;
-    private ImageView ivHome; // <-- ADD THIS
+    private ImageView ivHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offers);
 
-        // --- UPDATE THIS SECTION ---
+        // --- THIS IS THE UPDATED SECTION ---
         ivBack = findViewById(R.id.imgBack);
-        ivHome = findViewById(R.id.imgClose ); // <-- ADD THIS
+        ivHome = findViewById(R.id.imgClose ); // This is your home icon ID
 
         ivBack.setOnClickListener(v -> {
-            finish(); // Go back to the previous screen
+            finish(); // Go back to the previous screen (OfferMainActivity)
         });
 
         // Add a click listener for the home icon
         ivHome.setOnClickListener(v -> {
-            Intent intent = new Intent(OffersActivity.this, OfferMainActivity.class);
+            // *** THIS IS THE LINE TO CHANGE ***
+            // Go to DashboardActivity, not OfferMainActivity
+            Intent intent = new Intent(OffersActivity.this, DashboardActivity.class);
+
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
+            finish(); // Also close this activity
         });
-        // -------------------------
+        // ------------------------------------
 
         loadAllOffers();
         filteredOffersList = new ArrayList<>();

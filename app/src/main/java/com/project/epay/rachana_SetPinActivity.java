@@ -2,9 +2,10 @@ package com.project.epay;
 
 import android.content.Intent;
 import android.os.Bundle;
-// Imports for SharedPreferences
+// --- ADD THESE IMPORTS ---
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+// ---
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -13,28 +14,22 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-// --- ADD THESE IMPORTS ---
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-// --- END OF NEW IMPORTS ---
-
-// Firebase Database imports
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+// --- REMOVE FIREBASE AUTH IMPORTS ---
+// import com.google.firebase.auth.FirebaseAuth;
+// import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-// --- ADD THESE IMPORTS ---
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-// --- END OF NEW IMPORTS ---
 
 public class rachana_SetPinActivity extends AppCompatActivity {
-    // These keys must match BankDetailsActivity
+    // --- These keys must match BankDetailsActivity ---
     public static final String EXTRA_BANK_NAME = "extra_bank_name";
     public static final String EXTRA_ACCOUNT = "extra_account";
     public static final String EXTRA_CARD = "extra_card";
@@ -45,21 +40,27 @@ public class rachana_SetPinActivity extends AppCompatActivity {
     private List<EditText> pinFields;
     private Button btnSet;
 
-    // Variables to hold all bank details
+    // --- Variables to hold all bank details ---
     private String bankName, account, card, expiry;
 
-    // --- MODIFIED: This must be the ROOT reference ---
-    private DatabaseReference rootRef;
+    // --- Firebase Database Reference ---
+    private DatabaseReference databaseReference;
+    // --- REMOVE FIREBASE AUTH VARIABLE ---
+    // private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rachana_activity_set_pin);
 
-        // --- MODIFIED: Initialize to the ROOT of your database ---
-        rootRef = FirebaseDatabase.getInstance().getReference();
+        // --- Initialize Firebase ---
+        // --- REMOVE FIREBASE AUTH INITIALIZATION ---
+        // mAuth = FirebaseAuth.getInstance();
 
-        // --- View Initialization ---
+        // Get reference to the "BankAccounts" node (table)
+        databaseReference = FirebaseDatabase.getInstance().getReference("BankAccounts");
+
+        // --- View Initialization (same as before) ---
         ImageView imgBack = findViewById(R.id.imgBack);
         ImageView imgClose = findViewById(R.id.imgClose);
         imgBack.setOnClickListener(v -> finish());
@@ -93,93 +94,60 @@ public class rachana_SetPinActivity extends AppCompatActivity {
                 return;
             }
 
-            // --- MODIFIED: Disable button and run the check ---
-            btnSet.setEnabled(false);
-            Toast.makeText(this, "Checking account...", Toast.LENGTH_SHORT).show();
-            checkAndSaveBankDetails(pin);
+            // --- All data is ready. Now save to Firebase ---
+            saveBankDetails(pin);
         });
     }
 
     /**
-     * This method REPLACES your old saveBankDetails method.
-     * It checks for uniqueness *before* saving.
+     * New method to save the collected bank details to Firebase.
      */
-    private void checkAndSaveBankDetails(String pin) {
+    private void saveBankDetails(String pin) {
 
-        // --- 1. Get User's Email Key ---
+        // --- GET EMAIL FROM SHARED PREFERENCES ---
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // This key ("user_email_key") MUST match the key from MainActivity
         String userEmail = prefs.getString("user_email_key", null);
 
         if (userEmail == null || userEmail.isEmpty()) {
-            Toast.makeText(this, "User email not found. Cannot save.", Toast.LENGTH_LONG).show();
-            btnSet.setEnabled(true); // Re-enable button
+            Toast.makeText(this, "User email not found. Cannot save details.", Toast.LENGTH_LONG).show();
+            // Optional: Redirect to login screen
+            // startActivity(new Intent(this, MainActivity.class));
             return;
         }
+
+        // --- IMPORTANT: Create a valid Firebase Key from the email ---
+        // We replace '.' with '_' to match your Users table.
         String emailKey = userEmail.replace(".", "_");
 
-        // --- 2. Create the BankAccount Object ---
+        // 1. Create the BankAccount object with all the data
+        // (Make sure you have created the BankAccount.java class)
         BankAccount bankAccount = new BankAccount(bankName, account, card, expiry, pin);
 
-        // --- 3. Create the Unique Key to check (e.g., "SBI_123456789") ---
-        String compositeKey = bankName.toUpperCase().replaceAll("[^a-zA-Z0-9]", "") + "_" + account;
+        // 2. Save the object to Firebase under the user's sanitized email key
+        databaseReference.child(emailKey).setValue(bankAccount)
+                .addOnSuccessListener(aVoid -> {
+                    // Data saved successfully!
+                    Toast.makeText(rachana_SetPinActivity.this, "Bank Account Added!", Toast.LENGTH_SHORT).show();
 
-        // --- 4. Check the "RegisteredBankAccounts" index first ---
-        DatabaseReference indexRef = rootRef.child("RegisteredBankAccounts").child(compositeKey);
+                    // Now, go to the Success screen
+                    Intent i = new Intent(rachana_SetPinActivity.this, rachana_SuccessActivity.class);
 
-        indexRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    // --- ACCOUNT ALREADY EXISTS ---
-                    Toast.makeText(rachana_SetPinActivity.this, "This bank account is already registered.", Toast.LENGTH_LONG).show();
-                    btnSet.setEnabled(true); // Re-enable button
+                    // You can still pass data if the success screen needs it
+                    i.putExtra(EXTRA_BANK_NAME, bankName);
+                    i.putExtra(EXTRA_ACCOUNT, account);
 
-                } else {
-                    // --- ACCOUNT IS UNIQUE ---
-                    // Save it in TWO places at once using a multi-path update
-
-                    // Get a new unique push key for the user's bank list
-                    String newBankPushKey = rootRef.child("BankAccounts").child(emailKey).push().getKey();
-
-                    // Create the map for the atomic update
-                    Map<String, Object> updates = new HashMap<>();
-
-                    // Path 1: The user's bank list
-                    updates.put("/BankAccounts/" + emailKey + "/" + newBankPushKey, bankAccount);
-
-                    // Path 2: The new index entry
-                    updates.put("/RegisteredBankAccounts/" + compositeKey, emailKey);
-
-                    // Perform the atomic update
-                    rootRef.updateChildren(updates).addOnSuccessListener(aVoid -> {
-                        // Data saved successfully in BOTH places!
-                        Toast.makeText(rachana_SetPinActivity.this, "Bank Account Added!", Toast.LENGTH_SHORT).show();
-
-                        // Now, go to the Success screen
-                        Intent i = new Intent(rachana_SetPinActivity.this, rachana_SuccessActivity.class);
-                        i.putExtra(EXTRA_BANK_NAME, bankName);
-                        i.putExtra(EXTRA_ACCOUNT, account);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
-                        finish();
-
-                    }).addOnFailureListener(e -> {
-                        // Failed to save
-                        Toast.makeText(rachana_SetPinActivity.this, "Failed to add account: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        btnSet.setEnabled(true); // Re-enable button
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Failed to read the database
-                Toast.makeText(rachana_SetPinActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                btnSet.setEnabled(true); // Re-enable button
-            }
-        });
+                    // Clear the back stack and start the success activity
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(i);
+                    finish(); // Finish this activity
+                })
+                .addOnFailureListener(e -> {
+                    // Failed to save data
+                    Toast.makeText(rachana_SetPinActivity.this, "Failed to add account: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
-
 
     /**
      * Sets up listeners for each PIN field to handle auto-focus.

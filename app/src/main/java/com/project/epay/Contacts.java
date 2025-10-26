@@ -8,6 +8,8 @@ import android.util.Log;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 
+// --- ADD THIS IMPORT ---
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -54,7 +56,7 @@ public class Contacts extends AppCompatActivity {
         filteredList = new ArrayList<>();
 
         adapter = new ContactsAdapter(this, filteredList, (contact) -> {
-            // On contact click → open AmountActivity with both email and emailKey
+            // On contact click → open AmountActivity
             Intent intent = new Intent(Contacts.this, AmountActivity.class);
             intent.putExtra("name", contact.getName());
             intent.putExtra("phone", contact.getPhone());
@@ -70,14 +72,37 @@ public class Contacts extends AppCompatActivity {
         fetchContacts();
         setupSearchFilter();
 
-        // Home button
+        // ---*** THIS SECTION IS NOW CORRECT ***---
+        // The ID "btnBack" matches your new XML file
+        ImageView btnBack = findViewById(R.id.btnBack);
+        if(btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                finish(); // Closes this page and goes back to Dashboard
+            });
+        }
+        // ---*** END OF FIX ***---
+
+
+        // Updated Home Button
         ImageView btnHome = findViewById(R.id.btn_home);
         btnHome.setOnClickListener(v -> {
             Intent intent = new Intent(Contacts.this, DashboardActivity.class);
             intent.putExtra("email", email);
             intent.putExtra("emailKey", emailKey);
+            // Add flags to prevent duplicate Dashboards
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();
+        });
+
+
+        // Handle the physical back button
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // This closes the activity and returns to the Dashboard
+                finish();
+            }
         });
     }
 

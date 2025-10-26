@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback; // <-- **1. ADD THIS IMPORT**
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ public class PlanActivity extends AppCompatActivity {
     private PlanAdapter adapter;
     private Button nextButton;
     private ImageView btnHome;
+    private ImageView btnBack; // <-- **2. ADD THIS DECLARATION**
 
     private String mobile, operator, email, emailKey;
 
@@ -29,7 +31,8 @@ public class PlanActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerPlans);
         nextButton = findViewById(R.id.nextButton);
-        btnHome = findViewById(R.id.btn_home); // make sure you have this button in layout
+        btnHome = findViewById(R.id.btn_home);
+        btnBack = findViewById(R.id.btnBack); // <-- **3. FIND THE BACK BUTTON BY ID**
 
         // Receive data from RechargeActivity
         mobile = getIntent().getStringExtra("mobile");
@@ -46,7 +49,7 @@ public class PlanActivity extends AppCompatActivity {
             return;
         }
 
-        // Load sample plans
+        // Load sample plans (unchanged)
         List<Plan> planList = new ArrayList<>();
         planList.add(new Plan("₹19", "100MB • 1 day • 50 SMS", "1 day"));
         planList.add(new Plan("₹21", "150MB • 1 day • 50 SMS", "1 day"));
@@ -67,7 +70,7 @@ public class PlanActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Next button → go to PIN activity
+        // Next button → go to PIN activity (unchanged)
         nextButton.setOnClickListener(v -> {
             Plan selectedPlan = adapter.getSelectedPlan();
             if (selectedPlan != null) {
@@ -83,15 +86,34 @@ public class PlanActivity extends AppCompatActivity {
             }
         });
 
-        // Home button → DashboardActivity
+        // --- **4. ADD THIS CLICK LISTENER FOR THE BACK ARROW** ---
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                // finish() closes this page and goes back to Recharge
+                finish();
+            });
+        }
+
+        // --- **5. UPDATED HOME BUTTON LISTENER** ---
         if (btnHome != null) {
             btnHome.setOnClickListener(v -> {
                 Intent homeIntent = new Intent(PlanActivity.this, DashboardActivity.class);
                 homeIntent.putExtra("email", email);       // pass actual email
                 homeIntent.putExtra("emailKey", emailKey); // pass sanitized key
+                // Add flags to prevent duplicate Dashboards
+                homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(homeIntent);
                 finish();
             });
         }
+
+        // --- **6. ADD THIS FOR THE PHYSICAL BACK BUTTON** ---
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // This closes the activity and returns to the previous page
+                finish();
+            }
+        });
     }
 }

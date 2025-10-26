@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Epay"
-                android:textSize="39sp"
+                android:textSize="41sp"
                 android:textColor="@color/accent_blue"
                 android:textStyle="bold"
                 android:fontFamily="cursive"
@@ -37,11 +37,11 @@
                 android:layout_height="48dp"
                 android:padding="8dp"
                 android:src="@drawable/ic_profile"
-                android:tint="@color/colorPrimaryBlue"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/rounded_background_light"
-                android:contentDescription="Profile"/>
+                android:contentDescription="Profile"
+                app:tint="@color/colorPrimaryBlue" />
         </RelativeLayout>
 
         <!-- Wallet Balance Card (The main blue feature) -->

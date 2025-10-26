@@ -54,7 +54,8 @@
             android:contentDescription="Home Button"
             android:layout_margin="8dp"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            app:tint="@color/black" />
     </LinearLayout>
 
     <!-- Content card -->

@@ -17,7 +17,7 @@ public class BankDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_BANK_NAME = "extra_bank_name";
     public static final String EXTRA_ACCOUNT = "extra_account";
     public static final String EXTRA_CARD = "extra_card";
-    public static final String EXTRA_EXPIRY = "extra_expiry"; // <-- ADD THIS
+    public static final String EXTRA_EXPIRY = "extra_expiry";
 
     TextView tvSelectedBank;
     EditText etAccount, etCard, etExpiry, etCvv;
@@ -31,9 +31,19 @@ public class BankDetailsActivity extends AppCompatActivity {
 
         // --- View Initialization ---
         ImageView imgBack = findViewById(R.id.imgBack);
-        ImageView imgClose = findViewById(R.id.imgClose);
-        imgBack.setOnClickListener(v -> finish());
-        imgClose.setOnClickListener(v -> finishAffinity());
+        ImageView imgClose = findViewById(R.id.imgClose); // This is your Home icon
+        imgBack.setOnClickListener(v -> finish()); // Goes back to BankSelectionActivity
+
+        // ---*** THIS IS THE CHANGED BLOCK ***---
+        imgClose.setOnClickListener(v -> {
+            // Go to Dashboard
+            Intent intent = new Intent(BankDetailsActivity.this, DashboardActivity.class);
+            // Clear the activities on top
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish(); // Close this activity
+        });
+        // ---*** END OF CHANGE ***---
 
         tvSelectedBank = findViewById(R.id.tvSelectedBank);
         etAccount = findViewById(R.id.etAccountNumber);
@@ -52,93 +62,66 @@ public class BankDetailsActivity extends AppCompatActivity {
             if (validateInput()) {
                 String account = etAccount.getText().toString().trim();
                 String card = etCard.getText().toString().trim();
-                String expiry = etExpiry.getText().toString().trim(); // <-- GET EXPIRY
+                String expiry = etExpiry.getText().toString().trim();
 
                 Intent i = new Intent(BankDetailsActivity.this, rachana_SetPinActivity.class);
                 i.putExtra(EXTRA_BANK_NAME, bankName);
                 i.putExtra(EXTRA_ACCOUNT, account);
                 i.putExtra(EXTRA_CARD, card);
-                i.putExtra(EXTRA_EXPIRY, expiry); // <-- PASS EXPIRY TO NEXT SCREEN
+                i.putExtra(EXTRA_EXPIRY, expiry);
                 startActivity(i);
             }
         });
     }
 
-    // ... (Your existing validateInput() and isValidExpiryDate() methods) ...
-    // ... (No changes needed for the validation methods) ...
+    // ... (validateInput() and isValidExpiryDate() methods are unchanged) ...
 
-    /**
-     * A new method to validate all the input fields.
-     * @return true if all fields are valid, false otherwise.
-     */
     private boolean validateInput() {
         String account = etAccount.getText().toString().trim();
         String card = etCard.getText().toString().trim();
         String expiry = etExpiry.getText().toString().trim();
         String cvv = etCvv.getText().toString().trim();
 
-        // 1. Validate Account Number
         if (account.length() < 9 || account.length() > 18) {
             etAccount.setError("Account number must be between 9 and 18 digits");
             etAccount.requestFocus();
             return false;
         }
-
-        // 2. Validate Card Number
         if (card.length() != 16) {
             etCard.setError("Please enter a valid 16-digit card number");
             etCard.requestFocus();
             return false;
         }
-
-        // 3. Validate Expiry Date
         if (!isValidExpiryDate(expiry)) {
             etExpiry.setError("Invalid date. Use MM/YY format and a future date.");
             etExpiry.requestFocus();
             return false;
         }
-
-        // 4. Validate CVV
         if (cvv.length() < 3 || cvv.length() > 4) {
             etCvv.setError("CVV must be 3 or 4 digits");
             etCvv.requestFocus();
             return false;
         }
-
-        // If all checks pass, clear any previous errors
         etAccount.setError(null);
         etCard.setError(null);
         etExpiry.setError(null);
         etCvv.setError(null);
-
-        return true; // All validations passed
+        return true;
     }
 
-    /**
-     * Checks if the expiry date is in MM/YY format and is not in the past.
-     * @param expiryDate The date string from the EditText.
-     * @return true if the date is valid, false otherwise.
-     */
     private boolean isValidExpiryDate(String expiryDate) {
-        // Check for correct format (MM/YY)
         if (!expiryDate.matches("^(0[1-9]|1[0-2])\\/([0-9]{2})$")) {
             return false;
         }
-
         String[] parts = expiryDate.split("/");
         int month = Integer.parseInt(parts[0]);
         int year = Integer.parseInt(parts[1]);
-
-        // Get current year and month
         Calendar calendar = Calendar.getInstance();
-        int currentYear = calendar.get(Calendar.YEAR) % 100; // Get last two digits of the year
-        int currentMonth = calendar.get(Calendar.MONTH) + 1; // Calendar month is 0-11
-
-        // Check if the card is expired
+        int currentYear = calendar.get(Calendar.YEAR) % 100;
+        int currentMonth = calendar.get(Calendar.MONTH) + 1;
         if (year < currentYear || (year == currentYear && month < currentMonth)) {
             return false;
         }
-
         return true;
     }
 }
