@@ -7,7 +7,7 @@ It allows users to register, log in, view wallet balance, add money, make paymen
 
 ## 📝 Project Blog  
 Read the full write-up about this mini project here:  
-🔗 **https://www.blogger.com/u/2/blog/statspost/all_time/1015750013117768064/5925730273306098356**
+🔗 https://epaymobileapp.blogspot.com/2025/12/e-pay-android-wallet-application-mini.html
 
 ---
 
