@@ -1,4 +1,46 @@
-# Epay-android-application
-Developed a digital wallet app with secure login, wallet top-up, balance check, and transaction 
-history. Supports bill payments, mobile recharges, and UPI-based money transfer. Includes bank linking, 
-offers, and interactive features to enhance user experience.
+# 💳 Epay – Digital Wallet Android Application
+
+Epay is a digital wallet Android application built using **Java**, **XML**, and **Firebase**.  
+It allows users to register, log in, view wallet balance, add money, make payments, and track transactions — all stored securely on Firebase.
+
+---
+
+## ✨ Features
+- 🔐 User Login & Registration with **Firebase Authentication**
+- ☁️ User data stored in **Firebase Realtime Database / Firestore**
+- 💰 Wallet balance synced live with Firebase
+- ➕ Add Money (updates in Firebase)
+- 💳 Make Payments (deducts from Firebase)
+- 📜 Transaction history stored in Firebase
+- 📱 Simple and clean UI
+
+---
+
+## 🛠️ Tech Stack
+- **Language:** Java  
+- **UI:** XML  
+- **Backend:** Firebase  
+- **Firebase Services Used:**  
+  - Firebase Authentication  
+  - Firebase Realtime Database / Firestore  
+
+---
+
+📂 Project Structure
+app/
+ ├── java/com/your/package/
+ │     ├── MainActivity.java
+ │     ├── LoginActivity.java
+ │     ├── RegisterActivity.java
+ │     ├── PaymentActivity.java
+ │     └── TransactionHistoryActivity.java
+ ├── res/
+ │     ├── layout/
+ │     └── values/
+ └── AndroidManifest.xml
+ 
+---
+ 
+👩‍💻 Author
+Ananya Bhat N
+MCA Student | MIT
