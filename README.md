@@ -27,6 +27,7 @@ Read the full write-up about this mini project here:
 - **UI:** XML  
 - **Backend:** Firebase  
 - **Firebase Services Used:**  
+
   - Firebase Authentication  
   - Firebase Realtime Database / Firestore  
 
@@ -71,7 +72,8 @@ app/
 ### 💸 Pay Anyone
 <img src="https://github.com/user-attachments/assets/87c8bfec-098b-423f-86b7-81cdcc8142ea" width="220"/>
 <img src="https://github.com/user-attachments/assets/4f36f2d6-5772-4fd1-a6cd-f9df107b40d9" width="220"/>
-
+<img src="https://github.com/user-attachments/assets/720f2d30-fe93-4883-bd0a-d1e38cfb48f6" width="220"/>
+<img src="https://github.com/user-attachments/assets/a568934b-20c1-4303-9866-d42876c8d4f8" width="220"/>
 
 
 ### ➕ Mobile Recharge
