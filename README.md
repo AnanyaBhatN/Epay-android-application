@@ -56,7 +56,6 @@ app/
 
 
 ### 🏠 Home & Dashboard
-<img src="https://github.com/user-attachments/assets/378c685b-17c3-412c-bb19-8bcc3966e2f1" width="220"/>
 <img src="https://github.com/user-attachments/assets/2a014229-f25c-4223-9811-d46f4b35e215" width="220"/>
 
 ---
@@ -69,6 +68,9 @@ app/
 <img src="https://github.com/user-attachments/assets/94ab32f8-8ea2-43e5-8c6e-f8c8c5ea9596" width="220"/>
 
 ---
+
+### 💰 Wallet Management
+
 
 ### ➕ Add Money Flow
 <img src="https://github.com/user-attachments/assets/f8bcac4d-7c74-4b20-973c-4ec16eb2f9c3" width="220"/>
