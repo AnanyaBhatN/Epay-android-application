@@ -56,12 +56,11 @@ app/
 
 
 ### 🏠 Home & Dashboard
-<img src="https://github.com/user-attachments/assets/2a014229-f25c-4223-9811-d46f4b35e215" width="220"/>
+<img src="https://github.com/user-attachments/assets/e909b9a3-53ae-4e8d-95c7-8bebc1ef7ab1" width="220"/>
 
 ---
 
 ### 💰 Bank Account Management
-<img src="https://github.com/user-attachments/assets/87c8bfec-098b-423f-86b7-81cdcc8142ea" width="220"/>
 
 <img src="https://github.com/user-attachments/assets/0acdbe9c-def0-4ca0-a546-0c14a9124a32" width="220"/>
 <img src="https://github.com/user-attachments/assets/c1cdefee-aeb9-438e-b98e-dc2cbe4cbf47" width="220"/>
@@ -69,42 +68,41 @@ app/
 
 ---
 
-### 💰 Wallet Management
-
-
-### ➕ Add Money Flow
-<img src="https://github.com/user-attachments/assets/f8bcac4d-7c74-4b20-973c-4ec16eb2f9c3" width="220"/>
+### 💸 Payment & Transfer new
+<img src="https://github.com/user-attachments/assets/87c8bfec-098b-423f-86b7-81cdcc8142ea" width="220"/>
 <img src="https://github.com/user-attachments/assets/4f36f2d6-5772-4fd1-a6cd-f9df107b40d9" width="220"/>
-<img src="https://github.com/user-attachments/assets/e909b9a3-53ae-4e8d-95c7-8bebc1ef7ab1" width="220"/>
 
----
 
-### 💸 Payment & Transfer
+
+### ➕ Mobile Recharge
 <img src="https://github.com/user-attachments/assets/2b2ec708-90d1-4927-8152-75b8901be431" width="220"/>
 <img src="https://github.com/user-attachments/assets/bb0dcc23-367c-4c34-85c0-adf664cf4150" width="220"/>
 <img src="https://github.com/user-attachments/assets/4e35bdd3-60e7-40d8-8487-a9bdd3684797" width="220"/>
 
+
 ---
 
-### ✅ Transaction Status
+### 💸 Pay with UPI
 <img src="https://github.com/user-attachments/assets/586532ca-cea5-45e7-bae6-61b7abcae81f" width="220"/>
-<img src="https://github.com/user-attachments/assets/74ca79cc-6bee-486e-96b5-d661690c2b33" width="220"/>
+<img src="https://github.com/user-attachments/assets/0d41adad-86eb-40ae-93ce-43dd4c873852" width="220"/>
+<img src="https://github.com/user-attachments/assets/4046e3f7-16d6-4b7e-b7a2-a4138a28b8dc" width="220"/>
+<img src="https://github.com/user-attachments/assets/aa669df6-1541-4986-941d-a689d3a0b004" width="220"/>
+<img src="https://github.com/user-attachments/assets/81624916-f854-488f-b395-38d9cde5e99a" width="220"/>
+
+
+
+
+---
+
+### ✅ Offers and Rewards
+<img src="https://github.com/user-attachments/assets/709144d8-972d-4db8-8eff-dd7387775091" width="220"/>
+<img src="https://github.com/user-attachments/assets/3a918050-1cfd-4cfc-9593-909131e2a76e" width="220"/>
+<img src="https://github.com/user-attachments/assets/3bf0a7ee-6894-43ee-ba8c-db95df089791" width="220"/>
+<img src="https://github.com/user-attachments/assets/c030d658-0eb9-47ef-8e93-9af18f6f2b3c" width="220"/>
 
 ---
 
 ### 📜 Transaction History
-<img src="https://github.com/user-attachments/assets/c059a5d7-fe0b-43fa-9597-62fcb2e511a2" width="220"/>
-<img src="https://github.com/user-attachments/assets/f1d94fd7-ae78-4612-875f-08c89bcc7426" width="220"/>
-
----
-
-### 👤 Profile & Settings
-<img src="https://github.com/user-attachments/assets/e30f7149-f8da-4892-b527-a7b4b1453066" width="220"/>
-<img src="https://github.com/user-attachments/assets/06671e8e-a8d4-4b76-b3d9-a6b154c01e26" width="220"/>
-
----
-
-### ℹ️ Additional Features
 <img src="https://github.com/user-attachments/assets/f7c2b136-e257-4d1e-bcf8-178a0f29db2b" width="220"/>
 <img src="https://github.com/user-attachments/assets/5f95e48b-d72f-4235-8b44-c20d55ca0652" width="220"/>
 <img src="https://github.com/user-attachments/assets/6bdd3061-8748-4837-b5cf-21b1510e00ce" width="220"/>
