@@ -68,7 +68,7 @@ app/
 
 ---
 
-### 💸 Payment & Transfer new
+### 💸 Pay Anyone
 <img src="https://github.com/user-attachments/assets/87c8bfec-098b-423f-86b7-81cdcc8142ea" width="220"/>
 <img src="https://github.com/user-attachments/assets/4f36f2d6-5772-4fd1-a6cd-f9df107b40d9" width="220"/>
 
@@ -86,8 +86,9 @@ app/
 <img src="https://github.com/user-attachments/assets/586532ca-cea5-45e7-bae6-61b7abcae81f" width="220"/>
 <img src="https://github.com/user-attachments/assets/0d41adad-86eb-40ae-93ce-43dd4c873852" width="220"/>
 <img src="https://github.com/user-attachments/assets/4046e3f7-16d6-4b7e-b7a2-a4138a28b8dc" width="220"/>
-<img src="https://github.com/user-attachments/assets/aa669df6-1541-4986-941d-a689d3a0b004" width="220"/>
-<img src="https://github.com/user-attachments/assets/81624916-f854-488f-b395-38d9cde5e99a" width="220"/>
+<img src="https://github.com/user-attachments/assets/0e7fa15d-f58c-4c47-a74d-5bd1755d2d02" width="220"/>
+<img src="https://github.com/user-attachments/assets/1760607e-ba6e-4c2c-b750-e1d5f4d0a9b3" width="220"/>
+
 
 
 
