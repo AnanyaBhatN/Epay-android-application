@@ -103,13 +103,6 @@ app/
 ---
 
 ### 📜 Transaction History
-<img src="https://github.com/user-attachments/assets/f7c2b136-e257-4d1e-bcf8-178a0f29db2b" width="220"/>
-<img src="https://github.com/user-attachments/assets/5f95e48b-d72f-4235-8b44-c20d55ca0652" width="220"/>
-<img src="https://github.com/user-attachments/assets/6bdd3061-8748-4837-b5cf-21b1510e00ce" width="220"/>
-
----
-
-### ⚙️ System & Edge Screens
 <img src="https://github.com/user-attachments/assets/b7ad9e52-16c7-4e24-a1e1-6954d992b19c" width="220"/>
 <img src="https://github.com/user-attachments/assets/539a6e0e-8bf4-41e0-87a3-1012d199beef" width="220"/>
 <img src="https://github.com/user-attachments/assets/6ba12a47-b12e-41f4-a46a-e1b19f445cde" width="220"/>
